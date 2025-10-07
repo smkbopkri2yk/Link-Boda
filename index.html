@@ -3,1631 +3,435 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pengumuman Kelulusan - SMK BOPKRI 2 Yogyakarta</title>
-    <!-- Supabase JS -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- SheetJS Library (Keep if using client-side Excel features) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- SweetAlert2 Library -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Tailwind CSS (For development/testing only) -->
-    <!-- Note: cdn.tailwindcss.com should not be used in production. -->
+    <title>Link Saya - Versi Profesional</title>
+    
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome (untuk ikon) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- SortableJS (untuk drag-and-drop) -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+
+    <!-- SweetAlert2 (untuk dialog & notifikasi) -->
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- CSS Kustom -->
     <style>
-        /* Custom CSS (Keep existing styles) */
-        :root {
-            --primary-color: #1e40af; --primary-light: #3b82f6; --primary-dark: #1e3a8a;
-            --secondary-color: #10b981; --danger-color: #ef4444; --warning-color: #f59e0b;
-            --info-color: #06b6d4; --dark-color: #1f2937; --light-color: #f9fafb;
-            --gray-color: #6b7280; --border-color: #e5e7eb;
-        }
-        body { font-family: 'Poppins', sans-serif; background-color: #f8fafc; color: var(--dark-color); }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: var(--primary-light); border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--primary-dark); }
-
-        /* Animations */
-        .fade-in { animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        .spinner { animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* Sidebar Transition */
-        #sidebar { transition: transform 0.3s ease-in-out; }
-        .sidebar-hidden-mobile { transform: translateX(-100%); }
-
-        /* Custom Checkbox/Select */
-        .custom-checkbox { position: relative; padding-left: 28px; cursor: pointer; user-select: none; } .custom-checkbox input { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; } .checkmark { position: absolute; top: 0; left: 0; height: 20px; width: 20px; background-color: white; border: 2px solid var(--border-color); border-radius: 4px; } .custom-checkbox:hover input ~ .checkmark { background-color: #f3f4f6; } .custom-checkbox input:checked ~ .checkmark { background-color: var(--primary-color); border-color: var(--primary-color); } .checkmark:after { content: ""; position: absolute; display: none; } .custom-checkbox input:checked ~ .checkmark:after { display: block; } .custom-checkbox .checkmark:after { left: 6px; top: 2px; width: 5px; height: 10px; border: solid white; border-width: 0 2px 2px 0; transform: rotate(45deg); }
-        .custom-select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%231e40af' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 16px; appearance: none; }
-
-        /* Result message styling */
-        .result-message { border-left-width: 5px; border-left-style: solid; text-align: center; }
-        .result-message.lulus { border-left-color: var(--secondary-color); background-color: rgba(16, 185, 129, 0.1); }
-        .result-message.tidak-lulus { border-left-color: var(--danger-color); background-color: rgba(239, 68, 68, 0.1); }
-        .result-message.proses { border-left-color: var(--warning-color); background-color: rgba(245, 158, 11, 0.1); }
-        .result-message.dinonaktifkan { border-left-color: var(--info-color); background-color: rgba(6, 182, 212, 0.1); }
-
-        /* Status Badges */
-         .status-badge { padding: 0.2rem 0.6rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; white-space: nowrap; }
-         .status-badge.active { background-color: rgba(16, 185, 129, 0.1); color: #047857; }
-         .status-badge.inactive { background-color: rgba(239, 68, 68, 0.1); color: #b91c1c; }
-
-         /* Logo Preview */
-         #logo-preview {
-            max-width: 120px; max-height: 120px;
-            border: 1px dashed var(--border-color);
-            background-color: #f9fafb;
-         }
-
-         /* Button disabled state */
-         button:disabled { opacity: 0.6; cursor: not-allowed; }
-
-         /* Loading overlay */
-         .loading-overlay {
-            position: absolute; inset: 0;
-            background-color: rgba(255, 255, 255, 0.7);
-            display: flex; align-items: center; justify-content: center;
-            z-index: 10; /* Above content, below modal */
-            backdrop-filter: blur(2px); /* Optional: blur background */
-         }
-         /* Global loading overlay */
-         #global-loading {
-             position: fixed; /* Cover entire viewport */
-             background-color: rgba(31, 41, 55, 0.6); /* Darker overlay */
-             z-index: 9999; /* Highest */
-         }
-
-        /* Print styles */
-        @media print { .no-print { display: none !important; } body { background-color: white !important; color: black !important; } .print-container { padding: 0 !important; margin: 0 !important; max-width: 100% !important; } #print-result-message { display: block !important; } #content-area { margin-left: 0 !important; } .view { box-shadow: none !important; border: none !important; } }
+        body { background: linear-gradient(-45deg, #a2d2ff, #fefae0, #ffffff, #bde0fe); background-size: 400% 400%; animation: animated-gradient 15s ease infinite; background-attachment: fixed; }
+        @keyframes animated-gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .glass-card { background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .glass-card-hover:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 14px 28px rgba(31, 38, 135, 0.25); background: rgba(255, 255, 255, 0.4); }
+        .hidden-view { display: none; }
+        .fade-in-up { animation: fadeInUp 0.5s ease-out forwards; opacity: 0; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .sortable-ghost { opacity: 0.4; background: #c8ebfb; }
+        .drag-handle { cursor: grab; } .drag-handle:active { cursor: grabbing; }
+        .category-title { font-size: 1.25rem; font-weight: 700; color: #374151; margin-top: 1.5rem; margin-bottom: 0.75rem; text-align: center; }
     </style>
 </head>
-<body class="min-h-screen flex">
 
-    <!-- Loading Indicator (Global) -->
-    <div id="global-loading" class="loading-overlay hidden fixed inset-0">
-        <i class="fas fa-spinner spinner text-white text-4xl"></i>
-    </div>
+<body class="min-h-screen p-4">
 
-    <!-- Sidebar Navigation -->
-    <div id="sidebar" class="w-64 bg-gradient-to-b from-blue-800 to-blue-600 text-white flex flex-col items-center p-6 shadow-lg fixed inset-y-0 left-0 z-50 transform -translate-x-full md:translate-x-0 no-print">
-        <!-- Close button for mobile -->
-        <button id="sidebar-close-btn" class="absolute top-4 right-4 text-white hover:text-blue-200 focus:outline-none text-2xl md:hidden">
-            <i class="fas fa-times"></i>
-        </button>
-
-        <!-- School Logo and Name -->
-        <div class="flex flex-col items-center mb-8 mt-8 md:mt-0">
-            <img id="sidebar-logo" src="" <!-- Will be loaded by JS -->
-            <h2 class="text-lg font-bold text-center">SMK BOPKRI 2 YOGYAKARTA</h2>
-            <p class="text-xs text-blue-100 mt-1 text-center">Pengumuman Kelulusan</p>
-        </div>
-
-        <!-- Navigation & Footer -->
-        <nav class="w-full space-y-2">
-            <button id="show-login-btn" class="w-full flex items-center space-x-3 bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-medium py-3 px-4 rounded-lg transition-all duration-300">
-                <i class="fas fa-graduation-cap w-5 text-center"></i> <span>Cek Kelulusan</span>
-            </button>
-            <button id="show-admin-login-btn" class="w-full flex items-center space-x-3 bg-white bg-opacity-20 hover:bg-opacity-30 text-white font-medium py-3 px-4 rounded-lg transition-all duration-300">
-                <i class="fas fa-lock w-5 text-center"></i> <span>Login Admin</span>
-            </button>
-        </nav>
-        <div class="mt-6 text-xs text-blue-100 space-y-1">
-            <p class="font-medium mb-1">Informasi:</p>
-            <p><i class="fas fa-phone-alt fa-fw mr-1"></i> (0274) 376563</p>
-            <p><i class="fas fa-envelope fa-fw mr-1"></i> smkbopkri2yk@gmail.com</p>
-            <p><i class="fas fa-map-marker-alt fa-fw mr-1"></i> Jl. Bintaran Kulon 5, Yogyakarta</p>
-        </div>
-        <div class="mt-auto text-xs text-blue-100 text-center pt-4">
-            <p>created by : <br>Antonius Elga Kurnia, S.Pd </br> © <span id="current-year"></span> SMK BOPKRI 2 YK</p>
+    <!-- === VIEW UTAMA (LINKTREE PUBLIK) === -->
+    <div id="mainView">
+        <button id="adminLoginBtn" class="absolute top-4 left-4 glass-card px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-white/50 transition z-10"><i class="fa-solid fa-user-shield mr-2"></i>Admin</button>
+        <div class="w-full max-w-lg mx-auto mt-8 p-6 space-y-6">
+            <header class="text-center mb-10 fade-in-up">
+                <img id="publicProfileImg" src="https://via.placeholder.com/150" alt="Foto Profil" class="w-32 h-32 rounded-full mx-auto object-cover border-4 border-white shadow-xl">
+                <h1 id="publicProfileName" class="text-4xl font-extrabold mt-4 text-gray-800 drop-shadow-lg"></h1>
+                <p id="publicProfileBio" class="text-xl font-light text-gray-700 mt-1"></p>
+            </header>
+            <div id="links-container" class="space-y-4"></div>
         </div>
     </div>
 
-    <!-- Sidebar Overlay for Mobile -->
-    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden no-print"></div>
-
-    <!-- Content Area -->
-    <div class="flex-1 flex flex-col">
-         <!-- Mobile Header -->
-         <div class="md:hidden bg-white shadow-md p-4 flex justify-between items-center sticky top-0 z-30 no-print">
-             <span class="text-lg font-semibold text-blue-800">Pengumuman Kelulusan</span>
-             <button id="sidebar-open-btn" class="text-blue-800 focus:outline-none">
-                 <i class="fas fa-bars text-2xl"></i>
-             </button>
-         </div>
-
-         <!-- Main Content -->
-         <main id="content-area" class="flex-1 p-4 md:p-8 md:ml-64 transition-all duration-300 relative">
-             <!-- Loading Indicator (Content Area - General) -->
-            <div id="content-loading" class="loading-overlay hidden">
-                <i class="fas fa-spinner spinner text-blue-600 text-3xl"></i>
+    <!-- === VIEW LOGIN === -->
+    <div id="loginView" class="hidden-view">
+        <div class="min-h-screen flex items-center justify-center fade-in-up">
+            <div class="glass-card w-full max-w-md p-8 rounded-2xl space-y-6">
+                <h2 class="text-3xl font-bold text-center text-gray-800">Login Admin</h2>
+                <form id="loginForm" class="space-y-4">
+                    <input id="username" type="text" required placeholder="Username" class="w-full px-4 py-3 bg-white/50 border-2 border-transparent rounded-md focus:outline-none focus:border-blue-400 transition">
+                    <input id="password" type="password" required placeholder="Password" class="w-full px-4 py-3 bg-white/50 border-2 border-transparent rounded-md focus:outline-none focus:border-blue-400 transition">
+                    <button type="submit" class="w-full py-3 px-4 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition transform hover:scale-105">Masuk</button>
+                    <p id="loginError" class="text-red-500 text-sm text-center"></p>
+                </form>
+                <button id="backToMainBtn" class="w-full text-center text-sm text-gray-600 hover:underline">Kembali ke Halaman Utama</button>
             </div>
-
-            <!-- Views Container -->
-            <div id="views-container">
-                <!-- Student Login View -->
-                <div id="login-view" class="view w-full max-w-xl bg-white rounded-xl shadow-lg overflow-hidden fade-in">
-                    <div class="p-6 md:p-8">
-                        <div class="flex items-center justify-center mb-6"> <div class="bg-blue-100 p-3 rounded-full"> <i class="fas fa-graduation-cap text-blue-600 text-3xl"></i> </div> </div>
-                        <h3 class="text-xl md:text-2xl font-bold text-center text-gray-800 mb-2">Cek Status Kelulusan</h3>
-                        <p class="text-sm md:text-base text-gray-600 text-center mb-6 md:mb-8">Masukkan NISN Anda</p>
-                        <form id="student-login-form" class="space-y-4">
-                            <div>
-                                <label for="student-nisn" class="block text-sm font-medium text-gray-700 mb-1">NISN</label>
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"> <i class="fas fa-id-card text-gray-400"></i> </div>
-                                    <input type="text" id="student-nisn" name="nisn" required class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-base" placeholder="Masukkan NISN">
-                                </div>
-                            </div>
-                            <div id="student-login-error" class="hidden p-3 text-sm rounded-lg bg-red-50 text-red-800"></div>
-                            <button type="submit" id="student-login-submit-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center space-x-2 text-base">
-                                <i class="fas fa-search"></i> <span>Cek Status</span>
-                            </button>
-                        </form>
-                        <div class="mt-6 text-center text-xs md:text-sm text-gray-500">
-                            <p>Bantuan? Hubungi: <a href="tel:+62274376563" class="text-blue-600 hover:underline">(0274) 376563 <br> created by : <br>Antonius Elga Kurnia, S.Pd </br>  </a></p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Student Result View -->
-                <div id="result-view" class="view w-full max-w-xl bg-white rounded-xl shadow-lg overflow-hidden hidden">
-                    <div class="p-6 md:p-8">
-                        <div class="flex items-center justify-center mb-6"> <div id="result-icon" class="p-3 rounded-full"> <i id="status-icon" class="fas text-3xl"></i> </div> </div>
-                        <h3 class="text-xl md:text-2xl font-bold text-center text-gray-800 mb-6">Hasil Kelulusan</h3>
-                        <div id="result-message" class="result-message p-4 md:p-6 rounded-lg mb-6 md:mb-8 text-base md:text-lg"></div>
-                        <div class="flex flex-col sm:flex-row gap-3 md:gap-4">
-                            <button id="print-result-btn" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center space-x-2 text-sm md:text-base no-print"> <i class="fas fa-print"></i> <span>Cetak</span> </button>
-                            <button id="back-to-login-btn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center space-x-2 text-sm md:text-base no-print"> <i class="fas fa-redo"></i> <span>Cek Lagi</span> </button>
-                        </div>
-                        <div class="mt-6 md:mt-8 border-t border-gray-200 pt-4 md:pt-6 no-print">
-                            <h4 class="text-base md:text-lg font-medium text-gray-800 mb-3">Informasi Lanjut</h4>
-                            <ul class="space-y-2 text-xs md:text-sm text-gray-600 text-left">
-                                <li class="flex items-start"> <i class="fas fa-check-circle text-green-500 mt-1 mr-2 flex-shrink-0"></i> <span>LULUS: Info pengambilan SKL/Ijazah menyusul.</span> </li>
-                                <li class="flex items-start"> <i class="fas fa-exclamation-circle text-red-500 mt-1 mr-2 flex-shrink-0"></i> <span>BELUM LULUS: Harap hubungi Wali Kelas/Akademik bersama Orang Tua/Wali.</span> </li>
-                                <li class="flex items-start"> <i class="fas fa-phone-alt text-blue-500 mt-1 mr-2 flex-shrink-0"></i> <span>Kontak Sekolah: (0274) 1234567</span> </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Admin Login View -->
-                <div id="admin-login-view" class="view w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden hidden">
-                     <div class="p-6 md:p-8">
-                         <div class="flex items-center justify-center mb-6"> <div class="bg-blue-100 p-3 rounded-full"> <i class="fas fa-lock text-blue-600 text-3xl"></i> </div> </div>
-                         <h3 class="text-xl md:text-2xl font-bold text-center text-gray-800 mb-2">Admin Panel</h3>
-                         <p class="text-sm md:text-base text-gray-600 text-center mb-6 md:mb-8">Masukkan kredensial admin</p>
-                         <form id="admin-login-form" class="space-y-4">
-                             <div>
-                                 <label for="admin-email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                                 <div class="relative">
-                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"> <i class="fas fa-envelope text-gray-400"></i> </div>
-                                     <input type="email" id="admin-email" name="admin-email" required class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-base" placeholder="Email admin">
-                                 </div>
-                             </div>
-                             <div>
-                                 <label for="admin-password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                                 <div class="relative">
-                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"> <i class="fas fa-key text-gray-400"></i> </div>
-                                     <input type="password" id="admin-password" name="admin-password" required class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-base" placeholder="Password admin">
-                                 </div>
-                             </div>
-                             <div id="admin-login-error" class="hidden p-3 text-sm rounded-lg bg-red-50 text-red-800"></div>
-                             <button type="submit" id="admin-login-submit-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 flex items-center justify-center space-x-2 text-base">
-                                 <i class="fas fa-sign-in-alt"></i> <span>Login Admin</span>
-                             </button>
-                         </form>
-                     </div>
-                </div>
-
-                <!-- Admin Panel View -->
-                <div id="admin-panel-view" class="view w-full bg-white rounded-xl shadow-lg overflow-hidden hidden">
-                    <div class="p-4 md:p-8">
-                        <!-- Admin Header -->
-                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 md:mb-8">
-                             <div>
-                                 <h3 class="text-xl md:text-2xl font-bold text-gray-800">Admin Panel</h3>
-                                 <p class="text-sm md:text-base text-gray-600">Kelola Data Kelulusan Siswa</p>
-                             </div>
-                             <div class="mt-3 sm:mt-0">
-                                 <button id="admin-logout-btn" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center space-x-2 text-sm">
-                                     <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
-                                 </button>
-                             </div>
-                        </div>
-
-                         <!-- Section Pengaturan Tampilan -->
-                         <div class="bg-gray-50 rounded-lg p-4 md:p-6 mb-6 relative">
-                             <div id="logo-loading" class="loading-overlay hidden">
-                                <i class="fas fa-spinner spinner text-blue-600 text-xl"></i>
-                             </div>
-                             <h4 class="text-base md:text-lg font-medium text-gray-800 mb-4 flex items-center">
-                                 <i class="fas fa-palette text-blue-500 mr-2"></i>
-                                 Pengaturan Tampilan
-                             </h4>
-                             <div class="flex flex-col sm:flex-row items-center gap-4">
-                                 <div class="shrink-0">
-                                     <img id="logo-preview" src="#" alt="Logo Preview" class="w-24 h-24 p-1 border border-dashed border-gray-300 rounded-full object-contain bg-white">
-                                 </div>
-                                 <div class="flex-grow space-y-3">
-                                     <input type="file" id="logo-upload-input" accept="image/png, image/jpeg, image/gif, image/svg+xml" class="hidden">
-                                     <button id="select-logo-btn" class="w-full sm:w-auto border border-blue-600 text-blue-600 hover:bg-blue-50 font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center space-x-2 text-sm">
-                                         <i class="fas fa-image"></i>
-                                         <span>Pilih Logo Sekolah</span>
-                                     </button>
-                                     <div class="flex flex-col sm:flex-row gap-2">
-                                         <button id="save-logo-btn" disabled class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center space-x-2 text-sm">
-                                             <i class="fas fa-save"></i>
-                                             <span>Simpan Logo</span>
-                                         </button>
-                                         <button id="remove-logo-btn" class="w-full sm:w-auto bg-red-100 hover:bg-red-200 text-red-700 font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center space-x-2 text-sm" style="display: none;"> <!-- Initially hidden -->
-                                             <i class="fas fa-trash"></i>
-                                             <span>Hapus Logo Kustom</span>
-                                         </button>
-                                     </div>
-                                     <div id="logo-message" class="hidden p-3 text-sm rounded-lg"></div>
-                                     <small class="text-xs text-gray-500 block">Upload logo sekolah (Format: JPG, PNG, GIF, SVG. Max 1MB).</small>
-                                 </div>
-                             </div>
-                         </div>
-
-                        <!-- Import Excel Section -->
-                        <div class="bg-gray-50 rounded-lg p-4 md:p-6 mb-6 relative">
-                             <div id="import-loading" class="loading-overlay hidden">
-                                <i class="fas fa-spinner spinner text-blue-600 text-xl"></i>
-                             </div>
-                             <h4 class="text-base md:text-lg font-medium text-gray-800 mb-4 flex items-center"> <i class="fas fa-file-import text-blue-500 mr-2"></i> Import Data Excel </h4>
-                             <div class="space-y-3">
-                                 <div>
-                                     <label for="excel-file-input" class="block text-xs md:text-sm font-medium text-gray-700 mb-1">Pilih file (.xlsx, .xls)</label>
-                                     <div class="flex flex-col sm:flex-row gap-2">
-                                         <label class="flex-1 file-input">
-                                             <input type="file" id="excel-file-input" accept=".xlsx, .xls" class="hidden">
-                                             <div class="flex items-center justify-between px-3 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer">
-                                                 <span id="file-name" class="text-gray-500 truncate text-sm">Belum ada file</span>
-                                                 <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded text-xs">Pilih</span>
-                                             </div>
-                                         </label>
-                                         <button id="import-excel-btn" disabled class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center space-x-2 text-sm whitespace-nowrap">
-                                             <i class="fas fa-upload"></i> <span>Import</span>
-                                         </button>
-                                     </div>
-                                 </div>
-                                 <div id="import-message" class="hidden p-3 text-sm rounded-lg bg-blue-50 text-blue-800"></div>
-                                 <details class="text-xs md:text-sm text-gray-500">
-                                     <summary class="cursor-pointer font-medium text-blue-600 hover:underline">Lihat Format & Template</summary>
-                                     <div class="mt-2 pl-4 border-l-2 border-blue-200">
-                                         <p class="font-medium mb-1">Format Kolom:</p>
-                                         <ul class="list-disc pl-5 space-y-1">
-                                             <li>A: NISN (unik, teks)</li>
-                                             <li>B: Nama Lengkap (teks)</li>
-                                             <li>C: Status ('Lulus'/'Belum Lulus'/'Proses', case insensitive saat import)</li>
-                                             <li>D (Opsional): Akses ('Aktif'/'Nonaktif' atau 1/0, default Aktif, case insensitive saat import)</li>
-                                         </ul>
-                                         <p class="mt-2">Download: <button id="download-template-btn" class="text-blue-600 hover:underline font-medium">Template Excel</button></p>
-                                     </div>
-                                 </details>
-                             </div>
-                        </div>
-
-                        <!-- Add Student Manually Section -->
-                        <div class="bg-gray-50 rounded-lg p-4 md:p-6 mb-6 relative">
-                             <div id="add-student-loading" class="loading-overlay hidden">
-                                <i class="fas fa-spinner spinner text-blue-600 text-xl"></i>
-                             </div>
-                            <h4 class="text-base md:text-lg font-medium text-gray-800 mb-4 flex items-center"> <i class="fas fa-user-plus text-blue-500 mr-2"></i> Tambah Siswa Manual </h4>
-                            <form id="add-student-form" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
-                                <div class="sm:col-span-2 lg:col-span-1">
-                                    <label for="new-student-nisn" class="block text-xs md:text-sm font-medium text-gray-700 mb-1">NISN</label>
-                                    <input type="text" id="new-student-nisn" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm" placeholder="NISN Unik">
-                                </div>
-                                <div class="sm:col-span-2 lg:col-span-1">
-                                    <label for="new-student-name" class="block text-xs md:text-sm font-medium text-gray-700 mb-1">Nama</label>
-                                    <input type="text" id="new-student-name" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm" placeholder="Nama Lengkap">
-                                </div>
-                                <div class="sm:col-span-1">
-                                    <label for="new-student-status" class="block text-xs md:text-sm font-medium text-gray-700 mb-1">Status</label>
-                                    <select id="new-student-status" required class="custom-select w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm cursor-pointer">
-                                        <option value="Lulus">Lulus</option>
-                                        <option value="Belum Lulus">Belum Lulus</option>
-                                        <option value="Proses">Proses</option>
-                                    </select>
-                                </div>
-                                <div class="flex items-center pt-4 sm:pt-5">
-                                    <label class="custom-checkbox text-xs md:text-sm text-gray-700"> Akses?
-                                        <input type="checkbox" id="new-student-is-active" checked>
-                                        <span class="checkmark"></span>
-                                    </label>
-                                </div>
-                                <div class="flex items-end">
-                                    <button type="submit" id="add-student-submit-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center space-x-1 text-sm">
-                                        <i class="fas fa-plus"></i> <span>Tambah</span>
-                                    </button>
-                                </div>
-                            </form>
-                            <div id="admin-message" class="hidden p-3 mt-3 text-sm rounded-lg bg-green-50 text-green-800"></div>
-                        </div>
-
-                        <!-- Student List Section -->
-                        <div class="bg-gray-50 rounded-lg p-4 md:p-6 relative">
-                             <div id="table-loading" class="loading-overlay hidden">
-                                <i class="fas fa-spinner spinner text-blue-600 text-xl"></i>
-                             </div>
-                            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-3">
-                                <h4 class="text-base md:text-lg font-medium text-gray-800 flex items-center shrink-0"> <i class="fas fa-users text-blue-500 mr-2"></i> Daftar Siswa (<span id="student-count">0</span>)</h4>
-                                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full md:w-auto">
-                                    <div class="relative flex-grow">
-                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"> <i class="fas fa-search text-gray-400"></i> </div>
-                                        <input type="text" id="student-search" placeholder="Cari NISN/Nama/Status..." class="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm">
-                                    </div>
-                                    <button id="export-excel-btn" class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200 flex items-center justify-center space-x-2 text-sm shrink-0">
-                                        <i class="fas fa-file-export"></i> <span>Export</span>
-                                    </button>
-                                </div>
-                            </div>
-                            <div id="admin-table-message" class="hidden p-3 mb-3 text-sm rounded-lg bg-green-50 text-green-800"></div>
-                            <div class="overflow-x-auto border border-gray-200 rounded-lg">
-                                <table id="student-data-table" class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gray-100">
-                                        <tr>
-                                            <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NISN</th>
-                                            <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
-                                            <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                            <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Akses</th>
-                                            <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="student-list-body" class="bg-white divide-y divide-gray-200 text-sm">
-                                        <!-- Data will be loaded here by JS -->
-                                        <tr><td colspan="5" class="px-4 py-3 text-center text-gray-500 text-sm">Memuat data...</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div id="pagination-controls" class="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-4 px-2 py-2 bg-gray-50 rounded-b-lg hidden"> <!-- Initially hidden -->
-                                <div class="mb-2 sm:mb-0">
-                                    <label for="items-per-page" class="text-xs text-gray-700 mr-1">Item/Hal:</label>
-                                    <select id="items-per-page" class="custom-select px-2 py-1 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-xs cursor-pointer">
-                                        <option value="10">10</option>
-                                        <option value="25">25</option>
-                                        <option value="50">50</option>
-                                        <option value="100">100</option>
-                                    </select>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <span id="page-info" class="text-xs text-gray-700">Hal 1 dari 1</span>
-                                    <div class="flex space-x-1">
-                                        <button id="prev-page-btn" class="px-2 py-1 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed text-xs"> <i class="fas fa-chevron-left"></i> </button>
-                                        <button id="next-page-btn" class="px-2 py-1 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed text-xs"> <i class="fas fa-chevron-right"></i> </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                 </div>
-            </div>
-         </main>
+        </div>
     </div>
 
-    <!-- Print Container -->
-    <div id="print-container" class="hidden print:block print-container p-8 max-w-3xl mx-auto">
-         <div class="text-center mb-8">
-             <img id="print-logo" src="" <!-- Will be loaded by JS -->
-                  alt="Logo SMK BOPKRI 2 Yogyakarta" class="h-20 mx-auto mb-4 object-contain">
-             <h2 class="text-2xl font-bold">SMK BOPKRI 2 YOGYAKARTA</h2>
-             <p class="text-lg">Pengumuman Kelulusan</p>
-         </div>
-         <div id="print-result-message" class="p-6 border rounded-lg mb-8 text-lg text-center"></div>
-         <div class="border-t border-gray-400 pt-6 mt-12">
-             <div class="flex justify-between items-start">
-                 <div class="text-center w-1/2">
-                     <p class="mb-16">Kepala Sekolah,</p>
-                     <p class="font-bold underline">(Nama Kepala Sekolah)</p> <!-- Replace with actual name -->
-                     <p class="text-sm">NIP. (NIP Kepala Sekolah)</p> <!-- Replace with actual NIP -->
-                 </div>
-                 <div class="text-center w-1/2">
-                     <p>Yogyakarta, <span id="print-date"></span></p>
-                     <p class="mt-4 mb-12">Panitia Kelulusan,</p>
-                     <p class="font-bold underline">(Nama Ketua Panitia)</p> <!-- Replace with actual name -->
-                     <p class="text-sm">NIP. (NIP Ketua Panitia)</p> <!-- Replace with actual NIP -->
-                 </div>
-             </div>
-         </div>
+    <!-- === VIEW ADMIN === -->
+    <div id="adminView" class="hidden-view">
+        <div class="flex flex-col md:flex-row h-screen bg-white/20">
+            <aside class="w-full md:w-64 p-6 flex-shrink-0 flex flex-col glass-card">
+                <h2 class="text-2xl font-bold text-gray-800 mb-8">Admin Panel</h2>
+                <nav class="flex flex-col space-y-2 mb-auto">
+                    <button id="manageLinksBtn" class="w-full py-2 px-4 text-left bg-blue-100 text-blue-800 font-semibold rounded-lg"><i class="fa-solid fa-link w-6"></i> Kelola Link</button>
+                    <button id="settingsBtn" class="w-full py-2 px-4 text-left text-gray-700 font-semibold rounded-lg hover:bg-gray-200"><i class="fa-solid fa-sliders w-6"></i> Pengaturan</button>
+                </nav>
+                <div class="space-y-2">
+                    <button id="saveAndExitBtn" class="w-full py-2 px-4 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 transition"><i class="fa-solid fa-save mr-2"></i> Simpan & Keluar</button>
+                </div>
+            </aside>
+
+            <main class="flex-1 p-8 overflow-y-auto">
+                <div id="linkManagementContent">
+                    <h1 class="text-3xl font-bold mb-2 text-gray-800">Kelola Link</h1>
+                    <p class="text-gray-600 mb-6">Seret untuk mengurutkan, atau klik Edit untuk mengubah detail link.</p>
+                    <div id="admin-links-container" class="space-y-4"></div>
+                    <div id="pagination-controls" class="mt-6 flex justify-between items-center"></div>
+                    <button id="addNewLinkBtn" class="mt-6 py-2 px-4 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition"><i class="fa-solid fa-plus mr-2"></i> Tambah Link Baru</button>
+                </div>
+
+                <div id="settingsContent" class="hidden-view">
+                    <h1 class="text-3xl font-bold mb-6 text-gray-800">Pengaturan Profil</h1>
+                    <div class="space-y-6 glass-card p-6 rounded-lg max-w-2xl">
+                        <div class="flex items-center space-x-6">
+                            <img id="profileImagePreview" src="" class="w-24 h-24 rounded-full object-cover bg-gray-200 border-2 border-white">
+                            <div class="flex-1">
+                                <label for="profileImageInput" class="text-sm font-medium text-gray-700">URL Gambar Profil (Logo)</label>
+                                <input id="profileImageInput" type="text" placeholder="https://..." class="mt-1 block w-full px-3 py-2 bg-white/50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="profileNameInput" class="text-sm font-medium text-gray-700">Nama Tampilan</label>
+                            <input id="profileNameInput" type="text" class="mt-1 block w-full px-3 py-2 bg-white/50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label for="profileBioInput" class="text-sm font-medium text-gray-700">Bio Singkat (e.g., @username)</label>
+                            <input id="profileBioInput" type="text" class="mt-1 block w-full px-3 py-2 bg-white/50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
     </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
 
     <script>
-        // --- Supabase Configuration ---
-        const SUPABASE_URL = 'https://obnihubmuozbiemdterb.supabase.co'; // <-- Replace with your Supabase URL
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ibmlodWJtdW96YmllbWR0ZXJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYwNjUwMDEsImV4cCI6MjA2MTY0MTAwMX0.N1u4TohbvKvXB9f3BbDYsyIcekHYaGoN_dgFKC8lPb8'; // <-- Replace with your Supabase Anon Key
+        // =================================================================================
+        // KONFIGURASI FIREBASE ANDA
+        // GANTI DENGAN KONFIGURASI DARI PROYEK FIREBASE ANDA
+        // =================================================================================
+        const firebaseConfig = {
+             apiKey: "AIzaSyD53FikQjDPnf8cVAgzXViNttYuF6qtNmU",
+  authDomain: "link-bod.firebaseapp.com",
+  projectId: "link-bod",
+  storageBucket: "link-bod.firebasestorage.app",
+  messagingSenderId: "563207613619",
+  appId: "1:563207613619:web:e52436e5778cd43cf2d4c6",
+  measurementId: "G-F4Z7LKV327"
+        };
 
-        // --- Constants ---
-        const STUDENTS_TABLE = 'students';
-        const LOGO_BUCKET = 'school_assets'; // Bucket name in Supabase Storage
-        const LOGO_PATH = 'public/school_logo'; // Path within the bucket (fixed name for simplicity)
-        const DEFAULT_LOGO_URL = 'https://obnihubmuozbiemdterb.supabase.co/storage/v1/object/public/logos//logoboda.jpg'; // Fallback logo
+        // Inisialisasi Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const linksCollection = db.collection('links');
+        const profileDoc = db.collection('settings').doc('profile');
 
-        // --- Initialize Supabase Client ---
-        let supabase; // Declare supabase variable here
+        document.addEventListener('DOMContentLoaded', () => {
+            // === DOM ELEMENTS ===
+            const mainView = document.getElementById('mainView'), loginView = document.getElementById('loginView'), adminView = document.getElementById('adminView');
+            const linksContainer = document.getElementById('links-container'), adminLinksContainer = document.getElementById('admin-links-container');
+            const adminLoginBtn = document.getElementById('adminLoginBtn'), backToMainBtn = document.getElementById('backToMainBtn'), loginForm = document.getElementById('loginForm'), loginError = document.getElementById('loginError');
+            const publicProfileImg = document.getElementById('publicProfileImg'), publicProfileName = document.getElementById('publicProfileName'), publicProfileBio = document.getElementById('publicProfileBio');
+            const saveAndExitBtn = document.getElementById('saveAndExitBtn'), addNewLinkBtn = document.getElementById('addNewLinkBtn');
+            const manageLinksBtn = document.getElementById('manageLinksBtn'), settingsBtn = document.getElementById('settingsBtn');
+            const linkManagementContent = document.getElementById('linkManagementContent'), settingsContent = document.getElementById('settingsContent');
+            const profileNameInput = document.getElementById('profileNameInput'), profileBioInput = document.getElementById('profileBioInput'), profileImageInput = document.getElementById('profileImageInput'), profileImagePreview = document.getElementById('profileImagePreview');
+            const paginationControls = document.getElementById('pagination-controls');
 
-        // --- State Aplikasi ---
-        let currentPage = 1;
-        let itemsPerPage = 10;
-        let currentView = 'login-view';
-        let isSidebarOpenMobile = false;
-        let currentSort = { column: 'nisn', order: 'asc' };
-        let studentDataCache = []; // Cache for current page data
-        let totalStudentCount = 0; // Total count from DB
+            // === STATE & DATA ===
+            let linksData = [], profileData = {};
+            const ADMIN_USER = 'admin', ADMIN_PASS = 'password123'; // Login statis
+            let currentPage = 1, itemsPerPage = 5;
 
-        // --- DOM Elements ---
-        const views = document.querySelectorAll('.view');
-        const sidebar = document.getElementById('sidebar');
-        const sidebarOpenBtn = document.getElementById('sidebar-open-btn');
-        const sidebarCloseBtn = document.getElementById('sidebar-close-btn');
-        const sidebarOverlay = document.getElementById('sidebar-overlay');
-        const contentArea = document.getElementById('content-area');
-        const sidebarLogo = document.getElementById('sidebar-logo');
-        const printLogo = document.getElementById('print-logo');
-        const studentLoginForm = document.getElementById('student-login-form');
-        const studentNisnInput = document.getElementById('student-nisn');
-        const studentLoginError = document.getElementById('student-login-error');
-        const studentLoginSubmitBtn = document.getElementById('student-login-submit-btn');
-        const resultView = document.getElementById('result-view');
-        const resultMessage = document.getElementById('result-message');
-        const resultIcon = document.getElementById('result-icon');
-        const statusIcon = document.getElementById('status-icon');
-        const backToLoginBtn = document.getElementById('back-to-login-btn');
-        const printResultBtn = document.getElementById('print-result-btn');
-        const printContainer = document.getElementById('print-container');
-        const printResultMessage = document.getElementById('print-result-message');
-        const printDate = document.getElementById('print-date');
-        const adminLoginForm = document.getElementById('admin-login-form');
-        const adminEmailInput = document.getElementById('admin-email');
-        const adminPasswordInput = document.getElementById('admin-password');
-        const adminLoginError = document.getElementById('admin-login-error');
-        const adminLoginSubmitBtn = document.getElementById('admin-login-submit-btn');
-        const adminPanelView = document.getElementById('admin-panel-view');
-        const addStudentForm = document.getElementById('add-student-form');
-        const newStudentNisnInput = document.getElementById('new-student-nisn');
-        const newStudentNameInput = document.getElementById('new-student-name');
-        const newStudentStatusInput = document.getElementById('new-student-status');
-        const newStudentIsActiveCheckbox = document.getElementById('new-student-is-active');
-        const addStudentSubmitBtn = document.getElementById('add-student-submit-btn');
-        const studentListBody = document.getElementById('student-list-body');
-        const adminMessage = document.getElementById('admin-message');
-        const adminTableMessage = document.getElementById('admin-table-message');
-        const adminLogoutBtn = document.getElementById('admin-logout-btn');
-        const itemsPerPageSelect = document.getElementById('items-per-page');
-        const pageInfoSpan = document.getElementById('page-info');
-        const prevPageBtn = document.getElementById('prev-page-btn');
-        const nextPageBtn = document.getElementById('next-page-btn');
-        const excelFileInput = document.getElementById('excel-file-input');
-        const importExcelBtn = document.getElementById('import-excel-btn');
-        const importMessage = document.getElementById('import-message');
-        const fileNameSpan = document.getElementById('file-name');
-        const downloadTemplateBtn = document.getElementById('download-template-btn');
-        const exportExcelBtn = document.getElementById('export-excel-btn');
-        const studentSearchInput = document.getElementById('student-search');
-        const logoPreview = document.getElementById('logo-preview');
-        const logoUploadInput = document.getElementById('logo-upload-input');
-        const selectLogoBtn = document.getElementById('select-logo-btn');
-        const saveLogoBtn = document.getElementById('save-logo-btn');
-        const removeLogoBtn = document.getElementById('remove-logo-btn');
-        const logoMessage = document.getElementById('logo-message');
-        const paginationControls = document.getElementById('pagination-controls');
-        const studentCountSpan = document.getElementById('student-count');
-        const currentYearSpan = document.getElementById('current-year');
+            // === UI/UX FUNCTIONS ===
+            const showView = (view) => { [mainView, loginView, adminView].forEach(v => v.classList.add('hidden-view')); view.classList.remove('hidden-view'); };
+            const showAdminContent = (content) => {
+                [linkManagementContent, settingsContent].forEach(c => c.classList.add('hidden-view'));
+                content.classList.remove('hidden-view');
+                manageLinksBtn.classList.toggle('bg-blue-100', content === linkManagementContent);
+                settingsBtn.classList.toggle('bg-blue-100', content === settingsContent);
+            };
+            const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true });
 
-        // Loading Indicators
-        const globalLoading = document.getElementById('global-loading');
-        const contentLoading = document.getElementById('content-loading');
-        const tableLoading = document.getElementById('table-loading');
-        const importLoading = document.getElementById('import-loading');
-        const addStudentLoading = document.getElementById('add-student-loading');
-        const logoLoading = document.getElementById('logo-loading');
-
-        // --- Loading State Helpers ---
-        function showLoading(element = contentLoading) { element.classList.remove('hidden'); }
-        function hideLoading(element = contentLoading) { element.classList.add('hidden'); }
-        function showGlobalLoading() { globalLoading.classList.remove('hidden'); }
-        function hideGlobalLoading() { globalLoading.classList.add('hidden'); }
-
-        // --- Helper Functions ---
-        function showMessage(element, message, type = 'success', duration = 5000) {
-            if (!element) return;
-            element.innerHTML = ''; // Clear previous content
-            element.className = 'p-3 md:p-4 text-xs md:text-sm rounded-lg'; // Reset classes
-            element.style.display = 'block';
-
-            let iconHtml = '';
-            if (type === 'error') {
-                element.classList.add('bg-red-50', 'text-red-800');
-                iconHtml = '<i class="fas fa-exclamation-circle mr-2"></i>';
-            } else if (type === 'success') {
-                element.classList.add('bg-green-50', 'text-green-800');
-                iconHtml = '<i class="fas fa-check-circle mr-2"></i>';
-            } else if (type === 'info') {
-                element.classList.add('bg-blue-50', 'text-blue-800');
-                iconHtml = '<i class="fas fa-info-circle mr-2"></i>';
-            } else if (type === 'warning') {
-                element.classList.add('bg-yellow-50', 'text-yellow-800');
-                iconHtml = '<i class="fas fa-exclamation-triangle mr-2"></i>';
-            } else if (type === 'loading') {
-                element.classList.add('bg-blue-50', 'text-blue-800', 'flex', 'items-center');
-                element.innerHTML = `<i class="fas fa-spinner spinner mr-2"></i> ${message}`;
-                return; // Don't auto-hide loading messages
-            }
-
-            element.innerHTML = `${iconHtml}${message}`; // Use innerHTML to render the icon
-
-            if (duration > 0 && type !== 'loading') {
-                setTimeout(() => {
-                    hideMessage(element);
-                }, duration);
-            }
-        }
-
-        function hideMessage(element) {
-            if (element) {
-                element.style.display = 'none';
-                element.textContent = '';
-            }
-        }
-
-        function showView(viewId) {
-            currentView = viewId;
-            views.forEach(view => {
-                view.classList.add('hidden');
-                view.classList.remove('fade-in');
-            });
-            const activeView = document.getElementById(viewId);
-            if (activeView) {
-                activeView.classList.remove('hidden');
-                setTimeout(() => activeView.classList.add('fade-in'), 10);
-            } else {
-                const loginView = document.getElementById('login-view');
-                loginView.classList.remove('hidden');
-                loginView.classList.add('fade-in');
-                currentView = 'login-view';
-            }
-
-            // Clear forms and messages on view change
-            hideMessage(studentLoginError);
-            hideMessage(adminLoginError);
-            hideMessage(adminMessage);
-            hideMessage(adminTableMessage);
-            hideMessage(importMessage);
-            hideMessage(logoMessage);
-            excelFileInput.value = '';
-            fileNameSpan.textContent = 'Belum ada file dipilih';
-            importExcelBtn.disabled = true;
-            logoUploadInput.value = '';
-            saveLogoBtn.disabled = true;
-
-            if (viewId !== 'admin-panel-view') addStudentForm.reset();
-            if (viewId === 'login-view') studentLoginForm.reset();
-            if (viewId === 'admin-login-view') adminLoginForm.reset();
-            if (viewId === 'admin-panel-view' && supabase) { // Check if supabase is initialized
-                 currentPage = 1;
-                 itemsPerPage = parseInt(itemsPerPageSelect.value) || 10;
-                 fetchAndRenderStudentTable();
-                 loadLogo();
-            }
-            if (viewId !== 'result-view') {
-                hideMessage(resultMessage);
-            }
-            if(isSidebarOpenMobile) {
-                toggleMobileSidebar();
-            }
-        }
-
-        function toggleMobileSidebar() {
-            isSidebarOpenMobile = !isSidebarOpenMobile;
-            if (isSidebarOpenMobile) {
-                sidebar.classList.remove('-translate-x-full');
-                sidebar.classList.add('translate-x-0');
-                sidebarOverlay.classList.remove('hidden');
-            } else {
-                sidebar.classList.remove('translate-x-0');
-                sidebar.classList.add('-translate-x-full');
-                sidebarOverlay.classList.add('hidden');
-            }
-        }
-
-        function sanitizeHTML(str) {
-            const temp = document.createElement('div');
-            temp.textContent = str;
-            return temp.innerHTML;
-        }
-
-        // --- Supabase Data Fetching ---
-        async function fetchStudentData(page = 1, limit = 10, searchTerm = '') {
-            if (!supabase) return { data: [], totalCount: 0 }; // Guard clause if supabase not ready
-            showLoading(tableLoading);
-            try {
-                const startIndex = (page - 1) * limit;
-                let query = supabase
-                    .from(STUDENTS_TABLE)
-                    .select('*', { count: 'exact' })
-                    .order(currentSort.column, { ascending: currentSort.order === 'asc' })
-                    .range(startIndex, startIndex + limit - 1);
-
-                if (searchTerm) {
-                    query = query.or(`nisn.ilike.%${searchTerm}%,nama.ilike.%${searchTerm}%,status.ilike.%${searchTerm}%`);
-                }
-
-                const { data, error, count } = await query;
-
-                if (error) {
-                    console.error('Error fetching student data:', error);
-                    showMessage(adminTableMessage, `Gagal memuat data: ${error.message}`, 'error');
-                    return { data: [], totalCount: 0 };
-                }
-
-                totalStudentCount = count || 0;
-                studentDataCache = data || [];
-                return { data: studentDataCache, totalCount: totalStudentCount };
-
-            } catch (err) {
-                console.error('Client-side error fetching data:', err);
-                showMessage(adminTableMessage, 'Terjadi kesalahan saat memuat data.', 'error');
-                return { data: [], totalCount: 0 };
-            } finally {
-                hideLoading(tableLoading);
-            }
-        }
-
-        // --- Render Table ---
-        function renderStudentTable(students = [], totalItems = 0) {
-            studentListBody.innerHTML = '';
-            studentCountSpan.textContent = totalItems;
-
-            if (students.length === 0) {
-                const message = studentSearchInput.value ? 'Tidak ada data yang cocok dengan pencarian.' : 'Belum ada data siswa.';
-                studentListBody.innerHTML = `<tr><td colspan="5" class="px-4 py-3 text-center text-gray-500 text-sm"><i class="fas fa-info-circle mr-1"></i> ${message}</td></tr>`;
-            } else {
-                students.forEach(student => {
-                    const row = document.createElement('tr');
-                    row.className = 'hover:bg-gray-50 transition duration-150';
-                    row.setAttribute('data-nisn', student.nisn);
-
-                    const statusOptions = ['Lulus', 'Belum Lulus', 'Proses']
-                        .map(s => `<option value="${s}" ${student.status === s ? 'selected' : ''}>${s}</option>`)
-                        .join('');
-
-                    const safeNama = sanitizeHTML(student.nama || '');
-                    const safeStatus = sanitizeHTML(student.status || '');
-                    const isActive = typeof student.is_active === 'boolean' ? student.is_active : true;
-
-                    row.innerHTML = `
-                        <td class="px-4 py-2 whitespace-nowrap"><div class="text-xs md:text-sm font-medium text-gray-900">${student.nisn}</div></td>
-                        <td class="px-4 py-2">
-                            <span class="static-nama text-xs md:text-sm text-gray-900">${safeNama}</span>
-                            <input type="text" class="edit-input edit-nama hidden w-full px-2 py-1 border border-gray-300 rounded text-xs md:text-sm" value="${safeNama}">
-                        </td>
-                        <td class="px-4 py-2 whitespace-nowrap">
-                            <span class="static-status">
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                    student.status === 'Lulus' ? 'bg-green-100 text-green-800' :
-                                    student.status === 'Belum Lulus' ? 'bg-red-100 text-red-800' :
-                                    'bg-yellow-100 text-yellow-800'
-                                }">${safeStatus}</span>
-                            </span>
-                            <select class="edit-select edit-status hidden w-full px-2 py-1 border border-gray-300 rounded text-xs md:text-sm cursor-pointer">${statusOptions}</select>
-                        </td>
-                        <td class="px-4 py-2 whitespace-nowrap">
-                            <span class="status-badge ${isActive ? 'active' : 'inactive'}">${isActive ? 'Aktif' : 'Nonaktif'}</span>
-                        </td>
-                        <td class="px-4 py-2 whitespace-nowrap text-right text-xs">
-                            <div class="action-btn-group flex flex-col sm:flex-row gap-1 justify-end">
-                                <button data-nisn="${student.nisn}" title="Edit" class="edit-btn btn-small bg-yellow-100 hover:bg-yellow-200 text-yellow-800 py-1 px-2 rounded flex items-center justify-center space-x-1">
-                                    <i class="fas fa-edit"></i><span class="sm:inline hidden ml-1">Edit</span>
-                                </button>
-                                <button data-nisn="${student.nisn}" title="Hapus" class="delete-btn btn-small bg-red-100 hover:bg-red-200 text-red-800 py-1 px-2 rounded flex items-center justify-center space-x-1">
-                                    <i class="fas fa-trash-alt"></i><span class="sm:inline hidden ml-1">Hapus</span>
-                                </button>
-                                <button data-nisn="${student.nisn}" title="${isActive ? 'Nonaktifkan' : 'Aktifkan'} Akses" class="toggle-access-btn btn-small ${isActive ? 'btn-toggle-inactive bg-orange-100 hover:bg-orange-200 text-orange-800' : 'btn-toggle-active bg-teal-100 hover:bg-teal-200 text-teal-800'} py-1 px-2 rounded flex items-center justify-center space-x-1">
-                                    <i class="fas ${isActive ? 'fa-toggle-off' : 'fa-toggle-on'}"></i><span class="sm:inline hidden ml-1">${isActive ? 'Off' : 'On'}</span>
-                                </button>
-                                <button data-nisn="${student.nisn}" class="save-btn btn-small bg-green-100 hover:bg-green-200 text-green-800 py-1 px-2 rounded flex items-center justify-center space-x-1 hidden">
-                                    <i class="fas fa-check"></i><span class="sm:inline hidden ml-1">Simpan</span>
-                                </button>
-                                <button data-nisn="${student.nisn}" class="cancel-btn btn-small bg-gray-100 hover:bg-gray-200 text-gray-800 py-1 px-2 rounded flex items-center justify-center space-x-1 hidden">
-                                    <i class="fas fa-times"></i><span class="sm:inline hidden ml-1">Batal</span>
-                                </button>
-                            </div>
-                        </td>`;
-                    studentListBody.appendChild(row);
-                });
-            }
-            renderPaginationControls(totalItems);
-        }
-
-        // --- Fetch and Render Wrapper ---
-        async function fetchAndRenderStudentTable() {
-            if (!supabase) return; // Don't fetch if supabase not ready
-            const searchTerm = studentSearchInput.value.trim();
-            const { data, totalCount } = await fetchStudentData(currentPage, itemsPerPage, searchTerm);
-            renderStudentTable(data, totalCount);
-        }
-
-        // --- Render Pagination Controls ---
-        function renderPaginationControls(totalItems) {
-            const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
-            currentPage = Math.max(1, Math.min(currentPage, totalPages));
-
-            pageInfoSpan.textContent = `Hal ${currentPage} dari ${totalPages} (${totalItems} item)`;
-            prevPageBtn.disabled = currentPage === 1;
-            nextPageBtn.disabled = currentPage === totalPages;
-
-            if (totalPages <= 1 && totalItems <= itemsPerPage) {
-                paginationControls.classList.add('hidden');
-            } else {
-                paginationControls.classList.remove('hidden');
-            }
-        }
-
-        // --- CRUD Operations ---
-        function enableEditMode(nisn) {
-            cancelAllEdits();
-            const row = studentListBody.querySelector(`tr[data-nisn="${nisn}"]`);
-            if (row) {
-                row.classList.add('bg-blue-50');
-                row.querySelector('.static-nama').classList.add('hidden');
-                row.querySelector('.static-status').classList.add('hidden');
-                row.querySelector('.edit-nama').classList.remove('hidden');
-                row.querySelector('.edit-status').classList.remove('hidden');
-                row.querySelector('.edit-btn').classList.add('hidden');
-                row.querySelector('.delete-btn').classList.add('hidden');
-                row.querySelector('.toggle-access-btn').classList.add('hidden');
-                row.querySelector('.save-btn').classList.remove('hidden');
-                row.querySelector('.cancel-btn').classList.remove('hidden');
-                row.querySelector('.edit-nama').focus();
-            }
-        }
-
-        async function saveEdit(nisn) {
-            if (!supabase) return;
-            const row = studentListBody.querySelector(`tr[data-nisn="${nisn}"]`);
-            if (!row || !row.classList.contains('bg-blue-50')) return;
-
-            const newNama = row.querySelector('.edit-nama').value.trim();
-            const newStatus = row.querySelector('.edit-status').value;
-
-            if (!newNama) {
-                showMessage(adminTableMessage, 'Nama tidak boleh kosong.', 'error');
-                return;
-            }
-
-            showLoading(tableLoading);
-            try {
-                const { error } = await supabase
-                    .from(STUDENTS_TABLE)
-                    .update({ nama: newNama, status: newStatus })
-                    .eq('nisn', nisn);
-
-                if (error) {
-                    console.error("Error updating student:", error);
-                    showMessage(adminTableMessage, `Gagal memperbarui data: ${error.message}`, 'error');
-                    fetchAndRenderStudentTable(); // Re-render to show original state
-                } else {
-                    showMessage(adminTableMessage, `Data ${nisn} berhasil diperbarui.`, 'success');
-                    fetchAndRenderStudentTable(); // Re-fetch current page
-                }
-            } catch (err) {
-                 console.error("Client-side error saving edit:", err);
-                 showMessage(adminTableMessage, 'Terjadi kesalahan saat menyimpan perubahan.', 'error');
-                 fetchAndRenderStudentTable();
-            } finally {
-                 hideLoading(tableLoading);
-            }
-        }
-
-        function cancelEdit(nisn) {
-            renderStudentTable(studentDataCache, totalStudentCount); // Re-render from cache
-        }
-
-        function cancelAllEdits() {
-            const editingRows = studentListBody.querySelectorAll('tr.bg-blue-50');
-            if (editingRows.length > 0) {
-                 renderStudentTable(studentDataCache, totalStudentCount); // Re-render from cache
-            }
-        }
-
-        async function deleteStudent(nisn) {
-             if (!supabase) return;
-             showLoading(tableLoading);
-             try {
-                 const { error } = await supabase
-                     .from(STUDENTS_TABLE)
-                     .delete()
-                     .eq('nisn', nisn);
-
-                 if (error) {
-                     console.error("Error deleting student:", error);
-                     showMessage(adminTableMessage, `Gagal menghapus data: ${error.message}`, 'error');
-                 } else {
-                     showMessage(adminTableMessage, `Siswa ${nisn} berhasil dihapus.`, 'success');
-                     // Adjust page if last item deleted
-                     if (studentDataCache.length === 1 && currentPage > 1) {
-                         currentPage--;
-                     }
-                     fetchAndRenderStudentTable(); // Re-fetch data
-                 }
-             } catch (err) {
-                 console.error("Client-side error deleting student:", err);
-                 showMessage(adminTableMessage, 'Terjadi kesalahan saat menghapus data.', 'error');
-             } finally {
-                 hideLoading(tableLoading);
-             }
-        }
-
-        async function toggleStudentActiveStatus(nisn) {
-            if (!supabase) return;
-            showLoading(tableLoading);
-            try {
-                const { data: currentStudent, error: fetchError } = await supabase
-                    .from(STUDENTS_TABLE)
-                    .select('is_active')
-                    .eq('nisn', nisn)
-                    .single();
-
-                if (fetchError || !currentStudent) {
-                    console.error("Error fetching current status:", fetchError);
-                    showMessage(adminTableMessage, 'Gagal mendapatkan status siswa saat ini.', 'error');
-                    return;
-                }
-
-                const newActiveStatus = !currentStudent.is_active;
-
-                const { error: updateError } = await supabase
-                    .from(STUDENTS_TABLE)
-                    .update({ is_active: newActiveStatus })
-                    .eq('nisn', nisn);
-
-                if (updateError) {
-                    console.error("Error toggling access:", updateError);
-                    showMessage(adminTableMessage, `Gagal mengubah status akses: ${updateError.message}`, 'error');
-                } else {
-                    showMessage(adminTableMessage, `Status akses untuk ${nisn} berhasil diubah.`, 'success');
-                    fetchAndRenderStudentTable();
-                }
-            } catch (err) {
-                console.error("Client-side error toggling access:", err);
-                showMessage(adminTableMessage, 'Terjadi kesalahan saat mengubah status akses.', 'error');
-            } finally {
-                hideLoading(tableLoading);
-            }
-        }
-
-        // --- Import/Export/Template ---
-        async function handleExcelImport() {
-            if (!supabase) return;
-            const file = excelFileInput.files[0];
-            if (!file) {
-                showMessage(importMessage, "Pilih file Excel terlebih dahulu.", 'warning');
-                return;
-            }
-
-            showLoading(importLoading);
-            importExcelBtn.disabled = true;
-            showMessage(importMessage, "Memproses file Excel...", 'loading');
-
-            const reader = new FileReader();
-            reader.onload = async function(event) {
+            // === DATA MANAGEMENT (FIREBASE) ===
+            const loadData = async () => {
                 try {
-                    const data = new Uint8Array(event.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const firstSheetName = workbook.SheetNames[0];
-                    const worksheet = workbook.Sheets[firstSheetName];
-                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, raw: false, defval: "" });
-
-                    if (jsonData.length < 2) {
-                        throw new Error("File Excel kosong atau hanya berisi header.");
+                    // Load Profile
+                    const doc = await profileDoc.get();
+                    if (doc.exists) {
+                        profileData = doc.data();
+                    } else {
+                        profileData = { name: 'Nama Anda', bio: '@username', imageUrl: 'https://via.placeholder.com/150' };
+                        // Buat dokumen profil jika belum ada
+                        await profileDoc.set(profileData);
                     }
 
-                    let studentsToUpsert = [];
-                    let processedNisns = new Set();
-                    let importErrors = [];
-
-                    for (let i = 1; i < jsonData.length; i++) {
-                        const row = jsonData[i];
-                        if (!Array.isArray(row) || row.length < 3 || !row[0]) {
-                            importErrors.push(`Baris ${i + 1}: Format tidak valid atau NISN kosong.`);
-                            continue;
-                        }
-
-                        const nisn = String(row[0]).trim();
-                        const nama = String(row[1]).trim();
-                        const statusRaw = String(row[2]).trim().toLowerCase();
-                        const activeStatusRaw = row.length > 3 ? String(row[3] || '').trim().toLowerCase() : 'aktif';
-
-                        if (!nisn || !nama || !statusRaw) {
-                            importErrors.push(`Baris ${i + 1}: Data NISN, Nama, atau Status kosong.`);
-                            continue;
-                        }
-
-                        if (processedNisns.has(nisn)) {
-                             importErrors.push(`Baris ${i + 1}: NISN ${nisn} duplikat dalam file.`);
-                             continue;
-                        }
-                        processedNisns.add(nisn);
-
-                        let status = '';
-                        if (statusRaw === 'lulus') status = 'Lulus';
-                        else if (statusRaw === 'belum lulus') status = 'Belum Lulus';
-                        else if (statusRaw === 'proses') status = 'Proses';
-                        else {
-                            importErrors.push(`Baris ${i + 1}: Status '${row[2]}' tidak valid.`);
-                            continue;
-                        }
-
-                        let isActive = true;
-                        if (activeStatusRaw === 'nonaktif' || activeStatusRaw === '0') {
-                            isActive = false;
-                        } else if (activeStatusRaw !== 'aktif' && activeStatusRaw !== '1' && activeStatusRaw !== '') {
-                             console.warn(`Import Warn: Baris ${i+1} status akses '${row[3]}' tidak dikenali, dianggap Aktif.`);
-                        }
-
-                        studentsToUpsert.push({ nisn, nama, status, is_active: isActive });
-                    } // End loop
-
-                    let upsertedCount = 0;
-                    let upsertErrors = [];
-
-                    if (studentsToUpsert.length > 0) {
-                        // Use upsert: inserts new rows, updates existing rows based on the 'nisn' conflict target.
-                        const { error: upsertError, count } = await supabase
-                            .from(STUDENTS_TABLE)
-                            .upsert(studentsToUpsert, { onConflict: 'nisn' })
-                            .select({ count: 'minimal' }); // Get count of affected rows
-
-                        if (upsertError) {
-                            console.error("Supabase upsert error:", upsertError);
-                            upsertErrors.push(`Gagal menyimpan data ke database: ${upsertError.message}`);
-                            upsertedCount = 0; // Assume none succeeded on error
-                        } else {
-                            upsertedCount = count || 0; // Use the count returned by Supabase
-                        }
-                    }
-
-                    // --- Generate Summary Message ---
-                    let messageParts = [];
-                    if (upsertedCount > 0) messageParts.push(`${upsertedCount} data berhasil ditambahkan/diperbarui.`);
-                    if (importErrors.length > 0) messageParts.push(`${importErrors.length} baris error dalam file.`);
-                    if (upsertErrors.length > 0) messageParts.push(...upsertErrors);
-
-                    let finalMessage = messageParts.join(' ');
-                    let messageType = 'info';
-                    if (importErrors.length > 0 || upsertErrors.length > 0) {
-                        messageType = (upsertedCount > 0) ? 'warning' : 'error';
-                        if (importErrors.length > 0) {
-                            finalMessage += ` Error file pertama: ${importErrors[0]}`;
-                            console.warn("Import file errors:", importErrors);
-                        }
-                    } else if (upsertedCount === 0 && studentsToUpsert.length > 0) {
-                        finalMessage = "Tidak ada data baru yang ditambahkan/diperbarui.";
-                        messageType = 'info';
-                    } else if (studentsToUpsert.length === 0 && importErrors.length === 0) {
-                        finalMessage = "Tidak ada data valid untuk diimport dari file.";
-                        messageType = 'warning';
-                    }
-
-                    showMessage(importMessage, finalMessage, messageType, 10000);
-                    fetchAndRenderStudentTable(); // Refresh table data
+                    // Load Links
+                    const snapshot = await linksCollection.orderBy('order', 'asc').get();
+                    linksData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    
+                    renderPublicPage();
 
                 } catch (error) {
-                    console.error("Excel Import Error:", error);
-                    showMessage(importMessage, `Gagal memproses file: ${error.message}`, 'error');
-                } finally {
-                    excelFileInput.value = '';
-                    fileNameSpan.textContent = 'Belum ada file dipilih';
-                    importExcelBtn.disabled = true;
-                    hideLoading(importLoading);
+                    console.error("Error loading data: ", error);
+                    Toast.fire({ icon: 'error', title: 'Gagal memuat data.' });
                 }
             };
+            
+            // === RENDER FUNCTIONS (Tidak berubah signifikan) ===
+            const renderPublicPage = () => {
+                publicProfileImg.src = profileData.imageUrl;
+                publicProfileName.textContent = profileData.name;
+                publicProfileBio.textContent = profileData.bio;
+                linksContainer.innerHTML = '';
 
-            reader.onerror = function() {
-                console.error("File Reading Error:", reader.error);
-                showMessage(importMessage, "Tidak dapat membaca file.", 'error');
-                excelFileInput.value = '';
-                fileNameSpan.textContent = 'Belum ada file dipilih';
-                importExcelBtn.disabled = true;
-                hideLoading(importLoading);
-            };
+                const groupedLinks = linksData.reduce((acc, link) => {
+                    const category = link.category || 'Lainnya';
+                    if (!acc[category]) acc[category] = [];
+                    acc[category].push(link);
+                    return acc;
+                }, {});
 
-            reader.readAsArrayBuffer(file);
-        }
-
-        async function exportToExcel() {
-            if (!supabase) return;
-            showLoading(tableLoading);
-            showMessage(adminTableMessage, "Mempersiapkan data export...", "loading");
-            try {
-                // Fetch ALL students for export
-                const { data: students, error } = await supabase
-                    .from(STUDENTS_TABLE)
-                    .select('nisn, nama, status, is_active')
-                    .order('nisn');
-
-                if (error) {
-                    throw new Error(`Gagal mengambil data: ${error.message}`);
-                }
-
-                if (!students || students.length === 0) {
-                    showMessage(adminTableMessage, "Tidak ada data siswa untuk diexport.", 'warning');
-                    return;
-                }
-
-                const wsData = [
-                    ["NISN", "Nama Lengkap", "Status Kelulusan", "Akses Aktif"],
-                    ...students.map(s => [
-                        s.nisn, s.nama, s.status, s.is_active ? 'Aktif' : 'Nonaktif'
-                    ])
-                ];
-
-                const ws = XLSX.utils.aoa_to_sheet(wsData);
-                ws['!cols'] = [{ wch: 15 }, { wch: 30 }, { wch: 15 }, { wch: 10 }];
-                const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, "Data Siswa");
-                const date = new Date();
-                const dateStr = `${date.getFullYear()}${(date.getMonth() + 1).toString().padStart(2, '0')}${date.getDate().toString().padStart(2, '0')}`;
-                const fileName = `Data_Kelulusan_SMK_BOPKRI_2_${dateStr}.xlsx`;
-                XLSX.writeFile(wb, fileName);
-                showMessage(adminTableMessage, "Data berhasil diexport ke Excel.", 'success');
-
-            } catch (err) {
-                console.error("Export Error:", err);
-                showMessage(adminTableMessage, `Gagal export data: ${err.message}`, 'error');
-            } finally {
-                 hideLoading(tableLoading);
-                 if (adminTableMessage.textContent.includes("Mempersiapkan")) {
-                     hideMessage(adminTableMessage);
-                 }
-            }
-        }
-
-        function downloadTemplate() {
-            const templateData = [
-                ["NISN", "Nama Lengkap", "Status Kelulusan", "Akses Aktif"],
-                ["1234567890", "Contoh Nama Siswa", "Lulus", "Aktif"],
-                ["0987654321", "Siswa Belum Lulus", "Belum Lulus", ""],
-                ["1122334455", "Siswa Proses", "Proses", "Nonaktif"],
-                ["5566778899", "Siswa Lain", "Lulus", "0"]
-            ];
-            const ws = XLSX.utils.aoa_to_sheet(templateData);
-             ws['!cols'] = [{ wch: 15 }, { wch: 30 }, { wch: 15 }, { wch: 10 }];
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Template");
-            XLSX.writeFile(wb, "Template_Data_Kelulusan.xlsx");
-        }
-
-        // --- Logo Functions ---
-        async function loadLogo() {
-            if (!supabase) return; // Guard clause
-            showLoading(logoLoading);
-            let finalLogoSrc = DEFAULT_LOGO_URL; // Start with default
-            try {
-                // Construct the public URL with a timestamp for cache busting
-                const logoUrl = `${SUPABASE_URL}/storage/v1/object/public/${LOGO_BUCKET}/${LOGO_PATH}?t=${Date.now()}`;
-
-                // Attempt to fetch the image resource to check existence and type
-                const response = await fetch(logoUrl);
-
-                if (response.ok) {
-                    // Check if it's actually an image (basic check)
-                    const contentType = response.headers.get('content-type');
-                    if (contentType && contentType.startsWith('image/')) {
-                        finalLogoSrc = logoUrl; // Use the fetched URL
-                    } else {
-                         console.warn("Logo path exists but content type is not image. Using default.");
+                Object.keys(groupedLinks).sort().forEach(category => {
+                    if (category !== 'Lainnya' || linksData.some(l => l.category)) {
+                        const titleEl = document.createElement('h2');
+                        titleEl.className = 'category-title fade-in-up';
+                        titleEl.textContent = category;
+                        linksContainer.appendChild(titleEl);
                     }
-                } else if (response.status === 404) {
-                    console.log("Custom logo not found, using default.");
-                } else {
-                    console.warn(`Error checking logo (status ${response.status}), using default.`);
-                }
-            } catch (error) {
-                // Network errors, CORS issues etc.
-                console.error("Error loading logo:", error);
-            } finally {
-                // Set the src regardless of success or failure (will be default if needed)
-                sidebarLogo.src = finalLogoSrc;
-                printLogo.src = finalLogoSrc;
-                logoPreview.src = finalLogoSrc;
-                removeLogoBtn.style.display = (finalLogoSrc !== DEFAULT_LOGO_URL) ? 'inline-flex' : 'none';
-                hideLoading(logoLoading);
-            }
-        }
-
-
-        function handleLogoSelection(event) {
-            const file = event.target.files[0];
-            if (!file) {
-                saveLogoBtn.disabled = true;
-                return;
-            }
-            hideMessage(logoMessage);
-
-            if (!file.type.startsWith('image/')) {
-                showMessage(logoMessage, 'File harus berupa gambar (JPG, PNG, GIF, SVG).', 'error');
-                logoUploadInput.value = '';
-                saveLogoBtn.disabled = true;
-                return;
-            }
-            const maxSizeMB = 1;
-            if (file.size > maxSizeMB * 1024 * 1024) {
-                showMessage(logoMessage, `Ukuran file maksimal ${maxSizeMB}MB.`, 'error');
-                logoUploadInput.value = '';
-                saveLogoBtn.disabled = true;
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                logoPreview.src = e.target.result;
-                showMessage(logoMessage, 'Preview logo. Klik "Simpan Logo" untuk menerapkan.', 'info');
-                saveLogoBtn.disabled = false;
-            }
-            reader.onerror = function() {
-                showMessage(logoMessage, 'Gagal membaca file logo.', 'error');
-                saveLogoBtn.disabled = true;
-            }
-            reader.readAsDataURL(file);
-        }
-
-        async function handleSaveLogo() {
-            if (!supabase) return;
-            const file = logoUploadInput.files[0];
-            if (!file) {
-                showMessage(logoMessage, 'Pilih file logo baru terlebih dahulu.', 'warning');
-                return;
-            }
-
-            hideMessage(logoMessage);
-            showLoading(logoLoading);
-            saveLogoBtn.disabled = true;
-            selectLogoBtn.disabled = true;
-            removeLogoBtn.disabled = true;
-
-            try {
-                const filePath = LOGO_PATH; // Use the fixed path
-
-                const { data, error } = await supabase.storage
-                    .from(LOGO_BUCKET)
-                    .upload(filePath, file, {
-                        cacheControl: '3600', // Example cache control
-                        upsert: true // Overwrite existing file at the path
+                    
+                    groupedLinks[category].forEach((link, index) => {
+                        const el = document.createElement('a');
+                        el.href = link.url;
+                        el.target = "_blank";
+                        el.rel = "noopener noreferrer";
+                        el.className = `glass-card glass-card-hover p-4 w-full flex items-center justify-center text-lg font-semibold text-gray-800 rounded-xl shadow-lg transform transition duration-300 fade-in-up`;
+                        el.style.animationDelay = `${index * 100}ms`;
+                        el.innerHTML = `<i class="${link.icon} w-6 text-center mr-3"></i><span>${link.name}</span>`;
+                        linksContainer.appendChild(el);
                     });
-
-                if (error) {
-                    console.error("Logo Upload Error:", error);
-                    throw new Error(`Gagal mengupload logo: ${error.message}`);
-                }
-
-                showMessage(logoMessage, 'Logo berhasil disimpan.', 'success');
-                await loadLogo(); // Reload logo after successful upload
-
-            } catch (error) {
-                console.error("Error saving logo:", error);
-                 showMessage(logoMessage, error.message || 'Gagal menyimpan logo.', 'error');
-                 selectLogoBtn.disabled = false; // Re-enable select
-                 // Re-enable remove only if a custom logo was previously showing
-                 if (logoPreview.src !== DEFAULT_LOGO_URL) {
-                    removeLogoBtn.disabled = false;
-                 }
-            } finally {
-                hideLoading(logoLoading);
-                logoUploadInput.value = ''; // Reset file input regardless of outcome
-                // Keep save button disabled
-            }
-        }
-
-        async function handleRemoveLogo() {
-            if (!supabase) return;
-            const result = await Swal.fire({
-                 title: 'Hapus Logo Kustom?',
-                 text: "Logo akan dikembalikan ke gambar default.",
-                 icon: 'warning',
-                 showCancelButton: true,
-                 confirmButtonColor: '#d33', cancelButtonColor: '#6c757d',
-                 confirmButtonText: 'Ya, Hapus!', cancelButtonText: 'Batal'
-            });
-
-            if (result.isConfirmed) {
-                hideMessage(logoMessage);
-                showLoading(logoLoading);
-                saveLogoBtn.disabled = true;
-                selectLogoBtn.disabled = true;
-                removeLogoBtn.disabled = true;
-
-                try {
-                    const { data, error } = await supabase.storage
-                        .from(LOGO_BUCKET)
-                        .remove([LOGO_PATH]); // Path must match upload/load
-
-                    // Ignore 404 "Not found" errors if trying to delete something already gone
-                    if (error && !(error.statusCode === '404' || error.message.includes("Not Found"))) {
-                        console.error("Logo Removal Error:", error);
-                        throw new Error(`Gagal menghapus logo: ${error.message}`);
-                    }
-
-                    showMessage(logoMessage, 'Logo kustom berhasil dihapus.', 'success');
-                    await loadLogo(); // Reload to show default
-
-                } catch (error) {
-                    console.error("Error removing logo:", error);
-                    showMessage(logoMessage, error.message || 'Gagal menghapus logo.', 'error');
-                    // Re-enable buttons if removal failed
-                    selectLogoBtn.disabled = false;
-                    removeLogoBtn.disabled = false; // It failed, so the button should likely be active
-                } finally {
-                    hideLoading(logoLoading);
-                    logoUploadInput.value = '';
-                    // Button states are handled by loadLogo on success, or manually on error
-                }
-            }
-        }
-
-        // --- Print Function ---
-        async function printResult() {
-             // Ensure print logo is up-to-date (loadLogo should handle this)
-             printResultMessage.innerHTML = resultMessage.innerHTML;
-             const today = new Date();
-             const options = { day: 'numeric', month: 'long', year: 'numeric' };
-             printDate.textContent = today.toLocaleDateString('id-ID', options);
-             setTimeout(() => { window.print(); }, 200);
-         }
-
-
-        // --- Main Event Handlers ---
-        async function handleStudentLogin(event) {
-            event.preventDefault();
-            if (!supabase) return;
-            hideMessage(studentLoginError);
-            const nisn = studentNisnInput.value.trim();
-            if (!nisn) {
-                showMessage(studentLoginError, 'NISN tidak boleh kosong.', 'error');
-                return;
-            }
-
-            studentLoginSubmitBtn.disabled = true;
-            showLoading();
-
-            try {
-                const { data: foundStudent, error } = await supabase
-                    .from(STUDENTS_TABLE)
-                    .select('nisn, nama, status, is_active')
-                    .eq('nisn', nisn)
-                    .single();
-
-                if (error) {
-                    if (error.code === 'PGRST116') {
-                         showMessage(studentLoginError, '<br>Akses Link Kelulusan Mengalami Kendala</br><br>Silahkan Menghubungi Pihak Sekolah Bersama Orang Tua/Wali</br>.', 'error');
-                    } else {
-                        console.error("Student lookup error:", error);
-                        showMessage(studentLoginError, `Gagal mencari data: ${error.message}`, 'error');
-                    }
-                    return;
-                }
-
-                resultMessage.className = 'result-message p-4 md:p-6 rounded-lg mb-6 md:mb-8 text-base md:text-lg text-center';
-                const safeNama = sanitizeHTML(foundStudent.nama || '');
-                let messageText = '';
-                let statusClass = '';
-                let iconClass = '';
-                let iconBgColor = '';
-                let iconTextColor = '';
-
-                if (foundStudent.is_active === false) {
-                    messageText = `Mohon Maaf (${safeNama} - ${foundStudent.nisn}),<br>NISN Anda tidak dapat diakses saat ini.<br>Silakan hubungi pihak sekolah bersama Orang Tua/Wali.`;
-                    statusClass = 'dinonaktifkan'; iconClass = 'fa-user-lock'; iconBgColor = 'bg-blue-100'; iconTextColor = 'text-blue-600';
-                } else if (foundStudent.status === 'Lulus') {
-                    messageText = `Selamat (${safeNama} - ${foundStudent.nisn}),<br>Anda dinyatakan <strong>LULUS</strong> dari SMK BOPKRI 2 Yogyakarta.`;
-                    statusClass = 'lulus'; iconClass = 'fa-check-circle'; iconBgColor = 'bg-green-100'; iconTextColor = 'text-green-600';
-                } else if (foundStudent.status === 'Belum Lulus') {
-                    messageText = `Mohon Maaf (${safeNama} - ${foundStudent.nisn}),<br>Anda dinyatakan <strong>BELUM LULUS</strong>.<br>Harap menghubungi pihak sekolah bersama Orang Tua/Wali.`;
-                    statusClass = 'tidak-lulus'; iconClass = 'fa-times-circle'; iconBgColor = 'bg-red-100'; iconTextColor = 'text-red-600';
-                } else { // Proses
-                    messageText = `<div class="text-center"><h4 class="text-xl font-bold mb-2">STATUS KELULUSAN</h4><p class="mb-4">${safeNama} (${foundStudent.nisn})</p><div class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full inline-block mb-4"><i class="fas fa-hourglass-half mr-2"></i><span class="font-bold">SEDANG DALAM PROSES</span></div><p class="text-gray-700">Silakan cek kembali nanti.</p></div>`;
-                    statusClass = 'proses'; iconClass = 'fa-hourglass-half'; iconBgColor = 'bg-yellow-100'; iconTextColor = 'text-yellow-600';
-                }
-
-                resultIcon.className = `p-3 rounded-full ${iconBgColor}`;
-                statusIcon.className = `fas ${iconClass} ${iconTextColor} text-3xl`;
-                resultMessage.innerHTML = messageText;
-                resultMessage.classList.add(statusClass);
-                resultMessage.style.display = 'block';
-                showView('result-view');
-
-            } catch (err) {
-                 console.error("Client-side error during student login:", err);
-                 showMessage(studentLoginError, 'Terjadi kesalahan. Silakan coba lagi.', 'error');
-            } finally {
-                studentLoginSubmitBtn.disabled = false;
-                hideLoading();
-                studentLoginForm.reset();
-            }
-        }
-
-        async function handleAdminLogin(event) {
-            event.preventDefault();
-            if (!supabase) return;
-            hideMessage(adminLoginError);
-            const email = adminEmailInput.value.trim();
-            const password = adminPasswordInput.value;
-
-            if (!email || !password) {
-                showMessage(adminLoginError, 'Email dan Password wajib diisi.', 'error');
-                return;
-            }
-
-            adminLoginSubmitBtn.disabled = true;
-            showLoading();
-
-            try {
-                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-
-                if (error) {
-                    console.error("Admin Login Error:", error);
-                    if (error.message.includes("Invalid login credentials")) {
-                         showMessage(adminLoginError, 'Email atau Password salah.', 'error');
-                    } else {
-                         showMessage(adminLoginError, `Gagal login: ${error.message}`, 'error');
-                    }
-                } else if (data.user) {
-                    // Successful login - onAuthStateChange will handle view change
-                    adminLoginForm.reset();
-                } else {
-                     showMessage(adminLoginError, 'Gagal login, respons tidak valid.', 'error');
-                }
-
-            } catch (err) {
-                 console.error("Client-side error during admin login:", err);
-                 showMessage(adminLoginError, 'Terjadi kesalahan. Silakan coba lagi.', 'error');
-            } finally {
-                adminLoginSubmitBtn.disabled = false;
-                hideLoading();
-            }
-        }
-
-        async function handleAddStudentForm(event) {
-            event.preventDefault();
-            if (!supabase) return;
-            hideMessage(adminMessage);
-            const nisn = newStudentNisnInput.value.trim();
-            const nama = newStudentNameInput.value.trim();
-            const status = newStudentStatusInput.value;
-            const isActive = newStudentIsActiveCheckbox.checked;
-
-            if (!nisn || !nama) {
-                showMessage(adminMessage, 'NISN dan Nama wajib diisi.', 'error'); return;
-            }
-            if (!/^\d+$/.test(nisn)) {
-                 showMessage(adminMessage, 'NISN harus berupa angka.', 'error'); return;
-            }
-
-            addStudentSubmitBtn.disabled = true;
-            showLoading(addStudentLoading);
-
-            try {
-                const { data, error } = await supabase
-                    .from(STUDENTS_TABLE)
-                    .insert([{ nisn: nisn, nama: nama, status: status, is_active: isActive }]);
-
-                if (error) {
-                    console.error("Add Student Error:", error);
-                    if (error.code === '23505') { // Unique violation
-                        showMessage(adminMessage, `Gagal menambahkan: NISN ${nisn} sudah terdaftar.`, 'error');
-                    } else {
-                        showMessage(adminMessage, `Gagal menambahkan siswa: ${error.message}`, 'error');
-                    }
-                } else {
-                    showMessage(adminMessage, `Siswa ${nisn} (${nama}) berhasil ditambahkan.`, 'success');
-                    addStudentForm.reset();
-                    newStudentIsActiveCheckbox.checked = true;
-                    fetchAndRenderStudentTable(); // Refresh the table
-                }
-            } catch (err) {
-                 console.error("Client-side error adding student:", err);
-                 showMessage(adminMessage, 'Terjadi kesalahan saat menambahkan siswa.', 'error');
-            } finally {
-                addStudentSubmitBtn.disabled = false;
-                hideLoading(addStudentLoading);
-            }
-        }
-
-        function handleTableActions(event) {
-            const targetButton = event.target.closest('button[data-nisn]');
-            if (!targetButton) return;
-
-            const nisn = targetButton.dataset.nisn;
-            hideMessage(adminMessage);
-            hideMessage(adminTableMessage);
-
-            if (targetButton.classList.contains('edit-btn')) {
-                enableEditMode(nisn);
-            } else if (targetButton.classList.contains('delete-btn')) {
-                cancelAllEdits();
-                Swal.fire({
-                    title: 'Hapus Siswa?',
-                    html: `Yakin ingin menghapus data siswa NISN: <strong>${sanitizeHTML(nisn)}</strong>?`,
-                    icon: 'warning', showCancelButton: true,
-                    confirmButtonColor: '#d33', cancelButtonColor: '#6c757d',
-                    confirmButtonText: 'Ya, Hapus!', cancelButtonText: 'Batal'
-                }).then((result) => { if (result.isConfirmed) { deleteStudent(nisn); } });
-            } else if (targetButton.classList.contains('toggle-access-btn')) {
-                cancelAllEdits();
-                toggleStudentActiveStatus(nisn);
-            } else if (targetButton.classList.contains('save-btn')) {
-                saveEdit(nisn);
-            } else if (targetButton.classList.contains('cancel-btn')) {
-                cancelEdit(nisn);
-            }
-        }
-
-        async function handleAdminLogout() {
-            if (!supabase) return;
-            showGlobalLoading();
-            adminLogoutBtn.disabled = true;
-            try {
-                const { error } = await supabase.auth.signOut();
-                if (error) {
-                    console.error("Logout error:", error);
-                    alert(`Gagal logout: ${error.message}`);
-                    // Still attempt to show login view via onAuthStateChange
-                }
-                // onAuthStateChange handles view change
-            } catch (err) {
-                 console.error("Client-side logout error:", err);
-                 alert("Terjadi kesalahan saat logout.");
-                 // Manually try to reset view if needed, though onAuthStateChange should fire
-                 showView('login-view');
-                 hideGlobalLoading();
-                 adminLogoutBtn.disabled = false;
-            }
-            // Don't hide loading or re-enable button here, let onAuthStateChange handle it
-        }
-
-        // Debounce function
-        function debounce(func, wait) {
-            let timeout;
-            return function executedFunction(...args) {
-                const later = () => { clearTimeout(timeout); func(...args); };
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
+                });
             };
-        }
-        const debouncedSearch = debounce(() => { currentPage = 1; fetchAndRenderStudentTable(); }, 400);
 
+            const renderAdminPage = () => {
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = startIndex + itemsPerPage;
+                const paginatedLinks = linksData.slice(startIndex, endIndex);
 
-        // --- Initialization ---
-        document.addEventListener('DOMContentLoaded', async () => {
+                adminLinksContainer.innerHTML = '';
+                paginatedLinks.forEach((link) => {
+                    const el = document.createElement('div');
+                    el.className = 'glass-card p-4 rounded-lg';
+                    el.dataset.id = link.id;
+                    el.innerHTML = `
+                        <div class="view-mode flex items-center space-x-4">
+                            <span class="drag-handle text-gray-500 cursor-grab"><i class="fa-solid fa-grip-vertical"></i></span>
+                            <i class="${link.icon} w-6 text-center text-gray-600"></i>
+                            <div class="flex-1">
+                                <p class="font-semibold text-gray-800">${link.name}</p>
+                                <p class="text-sm text-gray-500">${link.category || 'Tanpa Kategori'}</p>
+                            </div>
+                            <button class="edit-btn p-2 text-blue-500 hover:text-blue-700 transition"><i class="fa-solid fa-pencil"></i></button>
+                            <button class="delete-btn p-2 text-red-500 hover:text-red-700 transition"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                        <div class="edit-mode hidden-view space-y-3">
+                            <input type="text" placeholder="Nama Link" value="${link.name}" class="admin-link-name w-full p-2 bg-white/50 border rounded">
+                            <input type="text" placeholder="Ikon (e.g., fa-brands fa-x-twitter)" value="${link.icon}" class="admin-link-icon w-full p-2 bg-white/50 border rounded">
+                            <input type="text" placeholder="URL Lengkap" value="${link.url}" class="admin-link-url w-full p-2 bg-white/50 border rounded">
+                            <input type="text" placeholder="Kategori (opsional)" value="${link.category || ''}" class="admin-link-category w-full p-2 bg-white/50 border rounded">
+                            <div class="flex justify-end space-x-2">
+                                <button class="cancel-edit-btn py-1 px-3 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">Batal</button>
+                                <button class="save-link-btn py-1 px-3 bg-green-500 text-white rounded hover:bg-green-600">Simpan</button>
+                            </div>
+                        </div>
+                    `;
+                    adminLinksContainer.appendChild(el);
+                });
+                renderPaginationControls();
+                profileNameInput.value = profileData.name;
+                profileBioInput.value = profileData.bio;
+                profileImageInput.value = profileData.imageUrl;
+                profileImagePreview.src = profileData.imageUrl;
+            };
 
-            // --- Initialize Supabase Client ---
-            try {
-                // Check if the global supabase object from the CDN script exists
-                if (typeof window.supabase === 'undefined' || !window.supabase.createClient) {
-                     throw new Error("Supabase library (supabase-js) not loaded. Check the script tag in <head>.");
-                }
-                // Initialize the client
-                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                console.log("Supabase client initialized successfully.");
-            } catch (error) {
-                console.error("Supabase initialization failed:", error);
-                document.body.innerHTML = `<div class="fixed inset-0 flex items-center justify-center bg-red-100 p-8 text-center text-lg font-semibold text-red-700 z-[10000]">
-                                                <i class="fas fa-times-circle mr-3 text-2xl"></i>
-                                                Error: Gagal menginisialisasi koneksi database (${error.message}).<br> Aplikasi tidak dapat berjalan. Muat ulang halaman atau hubungi administrator.
-                                            </div>`;
-                return; // Stop further execution
-            }
-            // --- End Supabase Initialization ---
+            const renderPaginationControls = () => {
+                const totalPages = Math.ceil(linksData.length / itemsPerPage);
+                paginationControls.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <label for="itemsPerPage" class="text-sm text-gray-600">Item per halaman:</label>
+                        <select id="itemsPerPage" class="bg-white/50 border rounded p-1 text-sm">
+                            <option value="5" ${itemsPerPage === 5 ? 'selected' : ''}>5</option>
+                            <option value="10" ${itemsPerPage === 10 ? 'selected' : ''}>10</option>
+                            <option value="15" ${itemsPerPage === 15 ? 'selected' : ''}>15</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button id="prevPageBtn" class="px-3 py-1 bg-white/50 rounded disabled:opacity-50" ${currentPage === 1 ? 'disabled' : ''}><i class="fa-solid fa-chevron-left"></i></button>
+                        <span class="text-sm text-gray-700 font-semibold">Halaman ${currentPage} dari ${totalPages || 1}</span>
+                        <button id="nextPageBtn" class="px-3 py-1 bg-white/50 rounded disabled:opacity-50" ${currentPage === totalPages || totalPages === 0 ? 'disabled' : ''}><i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                `;
+                document.getElementById('itemsPerPage').addEventListener('change', (e) => { itemsPerPage = parseInt(e.target.value); currentPage = 1; renderAdminPage(); });
+                document.getElementById('prevPageBtn')?.addEventListener('click', () => { if (currentPage > 1) { currentPage--; renderAdminPage(); } });
+                document.getElementById('nextPageBtn')?.addEventListener('click', () => { const totalPages = Math.ceil(linksData.length / itemsPerPage); if (currentPage < totalPages) { currentPage++; renderAdminPage(); } });
+            };
 
-            currentYearSpan.textContent = new Date().getFullYear();
-            itemsPerPageSelect.value = itemsPerPage;
-            showGlobalLoading();
-
-            await loadLogo(); // Load logo after client is initialized
-
-            // Check initial auth state
-            try {
-                const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-                 if (sessionError) throw sessionError; // Throw error to be caught below
-
-                if (session) {
-                    showView('admin-panel-view');
+            // === EVENT HANDLERS ===
+            const handleLogin = (e) => {
+                e.preventDefault();
+                if (e.target.username.value === ADMIN_USER && e.target.password.value === ADMIN_PASS) {
+                    loginError.textContent = '';
+                    currentPage = 1; // Reset ke halaman 1 saat login
+                    renderAdminPage();
+                    showAdminContent(linkManagementContent);
+                    showView(adminView);
                 } else {
-                    showView('login-view');
+                    loginError.textContent = 'Username atau password salah.';
                 }
-            } catch (authError) {
-                 console.error("Error checking initial auth session:", authError);
-                 // Show error message to user (optional)
-                 // showMessage(document.body, "Gagal memeriksa status login.", "error"); // Might be intrusive
-                 showView('login-view'); // Default to login view on error
-            } finally {
-                 hideGlobalLoading();
-            }
+            };
 
+            const handleAdminContainerClick = async (e) => {
+                const linkItem = e.target.closest('.glass-card');
+                if (!linkItem) return;
+                const linkId = linkItem.dataset.id;
+                
+                if (e.target.closest('.edit-btn')) {
+                    linkItem.querySelector('.view-mode').classList.add('hidden-view');
+                    linkItem.querySelector('.edit-mode').classList.remove('hidden-view');
+                }
+                if (e.target.closest('.cancel-edit-btn')) {
+                    renderAdminPage(); // render ulang untuk membatalkan
+                }
+                if (e.target.closest('.save-link-btn')) {
+                    const updatedLinkData = {
+                        name: linkItem.querySelector('.admin-link-name').value,
+                        icon: linkItem.querySelector('.admin-link-icon').value,
+                        url: linkItem.querySelector('.admin-link-url').value,
+                        category: linkItem.querySelector('.admin-link-category').value,
+                    };
+                    try {
+                        await linksCollection.doc(linkId).update(updatedLinkData);
+                        const index = linksData.findIndex(l => l.id === linkId);
+                        linksData[index] = { ...linksData[index], ...updatedLinkData };
+                        renderAdminPage();
+                        Toast.fire({ icon: 'success', title: 'Link diperbarui!' });
+                    } catch (error) {
+                        Toast.fire({ icon: 'error', title: 'Gagal memperbarui link.' });
+                        console.error(error);
+                    }
+                }
+                if (e.target.closest('.delete-btn')) {
+                    Swal.fire({
+                        title: 'Anda yakin?', text: "Link ini akan dihapus permanen!", icon: 'warning',
+                        showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Ya, hapus!', cancelButtonText: 'Batal'
+                    }).then(async (result) => {
+                        if (result.isConfirmed) {
+                             try {
+                                await linksCollection.doc(linkId).delete();
+                                linksData = linksData.filter(l => l.id !== linkId);
+                                if (linksData.length > 0 && (currentPage - 1) * itemsPerPage >= linksData.length) {
+                                    currentPage--;
+                                }
+                                renderAdminPage();
+                                Toast.fire({ icon: 'success', title: 'Link berhasil dihapus.' });
+                            } catch (error) {
+                                Toast.fire({ icon: 'error', title: 'Gagal menghapus link.' });
+                                console.error(error);
+                            }
+                        }
+                    });
+                }
+            };
+            
+            const handleAddNewLink = async () => {
+                try {
+                    // Tentukan 'order' untuk link baru. Ambil order tertinggi + 1.
+                    const highestOrder = linksData.reduce((max, link) => link.order > max ? link.order : max, -1);
+                    const newLink = { 
+                        name: 'Link Baru', url: '#', icon: 'fa-solid fa-link', category: '',
+                        order: highestOrder + 1
+                    };
+                    const docRef = await linksCollection.add(newLink);
+                    linksData.push({ id: docRef.id, ...newLink });
+                    currentPage = Math.ceil(linksData.length / itemsPerPage);
+                    renderAdminPage();
+                    const newItem = adminLinksContainer.querySelector(`[data-id='${docRef.id}']`);
+                    newItem?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    newItem?.querySelector('.edit-btn').click();
+                } catch (error) {
+                    Toast.fire({ icon: 'error', title: 'Gagal menambah link.'});
+                    console.error(error);
+                }
+            };
 
-            // Listen for auth state changes
-            supabase.auth.onAuthStateChange((event, session) => {
-                console.log('Auth State Change:', event, session ? 'Session Active' : 'No Session');
-                if (event === 'SIGNED_IN') {
-                    showView('admin-panel-view');
-                    adminLogoutBtn.disabled = false; // Ensure logout button is enabled
-                } else if (event === 'SIGNED_OUT') {
-                    showView('login-view');
-                    // Clear any sensitive admin data if necessary
-                    studentDataCache = [];
-                    totalStudentCount = 0;
-                    hideGlobalLoading(); // Ensure loading is hidden on logout
-                    adminLogoutBtn.disabled = false; // Re-enable button after logout completes
+            const handleSaveAndExit = async () => {
+                const newProfileData = { 
+                    name: profileNameInput.value, 
+                    bio: profileBioInput.value, 
+                    imageUrl: profileImageInput.value 
+                };
+                try {
+                    await profileDoc.set(newProfileData, { merge: true });
+                    Toast.fire({ icon: 'success', title: 'Perubahan disimpan!' });
+                    await loadData(); // Muat ulang semua data untuk sinkronisasi
+                    showView(mainView);
+                } catch(error) {
+                    Toast.fire({ icon: 'error', title: 'Gagal menyimpan pengaturan.' });
+                    console.error(error);
+                }
+            };
+
+            // === INITIALIZATION ===
+            adminLoginBtn.addEventListener('click', () => showView(loginView));
+            backToMainBtn.addEventListener('click', () => showView(mainView));
+            loginForm.addEventListener('submit', handleLogin);
+            addNewLinkBtn.addEventListener('click', handleAddNewLink);
+            saveAndExitBtn.addEventListener('click', handleSaveAndExit);
+            manageLinksBtn.addEventListener('click', () => showAdminContent(linkManagementContent));
+            settingsBtn.addEventListener('click', () => showAdminContent(settingsContent));
+            profileImageInput.addEventListener('input', () => profileImagePreview.src = profileImageInput.value);
+            adminLinksContainer.addEventListener('click', handleAdminContainerClick);
+
+            new Sortable(adminLinksContainer, {
+                animation: 150, ghostClass: 'sortable-ghost', handle: '.drag-handle',
+                onEnd: async (evt) => {
+                    const pageStartIndex = (currentPage - 1) * itemsPerPage;
+                    const [movedItem] = linksData.splice(pageStartIndex + evt.oldDraggableIndex, 1);
+                    linksData.splice(pageStartIndex + evt.newDraggableIndex, 0, movedItem);
+
+                    const batch = db.batch();
+                    linksData.forEach((link, index) => {
+                        link.order = index;
+                        const docRef = linksCollection.doc(link.id);
+                        batch.update(docRef, { order: index });
+                    });
+                    
+                    try {
+                        await batch.commit();
+                        renderAdminPage();
+                    } catch (error) {
+                        Toast.fire({ icon: 'error', title: 'Gagal menyimpan urutan.'});
+                        console.error(error);
+                        await loadData(); // Rollback jika gagal
+                        renderAdminPage();
+                    }
                 }
             });
 
-
-            // --- Event Listeners ---
-            sidebarOpenBtn.addEventListener('click', toggleMobileSidebar);
-            sidebarCloseBtn.addEventListener('click', toggleMobileSidebar);
-            sidebarOverlay.addEventListener('click', toggleMobileSidebar);
-
-            document.getElementById('show-login-btn').addEventListener('click', () => showView('login-view'));
-            document.getElementById('show-admin-login-btn').addEventListener('click', () => showView('admin-login-view'));
-            backToLoginBtn.addEventListener('click', () => showView('login-view'));
-            printResultBtn.addEventListener('click', printResult);
-            adminLogoutBtn.addEventListener('click', handleAdminLogout);
-
-            studentLoginForm.addEventListener('submit', handleStudentLogin);
-            adminLoginForm.addEventListener('submit', handleAdminLogin);
-            addStudentForm.addEventListener('submit', handleAddStudentForm);
-
-            studentListBody.addEventListener('click', handleTableActions);
-
-            itemsPerPageSelect.addEventListener('change', (e) => {
-                itemsPerPage = parseInt(e.target.value);
-                currentPage = 1;
-                fetchAndRenderStudentTable();
+            loadData().then(() => {
+                showView(mainView);
             });
-
-            prevPageBtn.addEventListener('click', () => {
-                if (currentPage > 1) { currentPage--; fetchAndRenderStudentTable(); }
-            });
-            nextPageBtn.addEventListener('click', () => {
-                 const totalPages = Math.ceil(totalStudentCount / itemsPerPage) || 1;
-                 if (currentPage < totalPages) { currentPage++; fetchAndRenderStudentTable(); }
-            });
-
-            importExcelBtn.addEventListener('click', handleExcelImport);
-            exportExcelBtn.addEventListener('click', exportToExcel);
-            downloadTemplateBtn.addEventListener('click', downloadTemplate);
-
-            excelFileInput.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                fileNameSpan.textContent = file ? file.name : 'Belum ada file dipilih';
-                importExcelBtn.disabled = !file;
-                hideMessage(importMessage);
-            });
-
-            studentSearchInput.addEventListener('input', debouncedSearch);
-
-            // Logo Listeners
-            selectLogoBtn.addEventListener('click', () => logoUploadInput.click());
-            logoUploadInput.addEventListener('change', handleLogoSelection);
-            saveLogoBtn.addEventListener('click', handleSaveLogo);
-            removeLogoBtn.addEventListener('click', handleRemoveLogo);
-
-            // Prevent form submission on Enter in table inputs
-            adminPanelView.addEventListener('keydown', (event) => {
-                if (event.key === 'Enter' && event.target.closest('.edit-input')) {
-                    event.preventDefault();
-                    const nisn = event.target.closest('tr')?.dataset.nisn;
-                    if (nisn) { saveEdit(nisn); }
-                }
-            });
-
-        }); // End DOMContentLoaded
+        });
     </script>
 </body>
 </html>
