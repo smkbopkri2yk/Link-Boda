@@ -3,32 +3,231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Link Saya - Versi Profesional</title>
+    <title>Link Saya - Professional LinkTree</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Halaman link profesional dengan fitur analytics dan customization">
+    <meta name="theme-color" content="#3B82F6">
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Font Awesome (untuk ikon) -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- SortableJS (untuk drag-and-drop) -->
+    <!-- SortableJS -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 
-    <!-- SweetAlert2 (untuk dialog & notifikasi) -->
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- CSS Kustom -->
+    <!-- Chart.js untuk Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- QRCode.js -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
     <style>
-        body { background: linear-gradient(-45deg, #a2d2ff, #fefae0, #ffffff, #bde0fe); background-size: 400% 400%; animation: animated-gradient 15s ease infinite; background-attachment: fixed; }
-        @keyframes animated-gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        .glass-card { background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
-        .glass-card-hover:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 14px 28px rgba(31, 38, 135, 0.25); background: rgba(255, 255, 255, 0.4); }
+        :root {
+            --gradient-1: #a2d2ff;
+            --gradient-2: #fefae0;
+            --gradient-3: #ffffff;
+            --gradient-4: #bde0fe;
+            --primary-color: #3B82F6;
+            --secondary-color: #8B5CF6;
+        }
+
+        body { 
+            background: linear-gradient(-45deg, var(--gradient-1), var(--gradient-2), var(--gradient-3), var(--gradient-4)); 
+            background-size: 400% 400%; 
+            animation: animated-gradient 15s ease infinite; 
+            background-attachment: fixed; 
+        }
+        
+        body.dark-theme {
+            background: linear-gradient(-45deg, #1e293b, #334155, #0f172a, #1e3a5f);
+        }
+        
+        body.minimal-theme {
+            background: #f8fafc;
+        }
+        
+        body.sunset-theme {
+            background: linear-gradient(-45deg, #ff6b6b, #feca57, #ee5a6f, #ff9ff3);
+        }
+        
+        body.forest-theme {
+            background: linear-gradient(-45deg, #2d6a4f, #40916c, #52b788, #74c69d);
+        }
+        
+        @keyframes animated-gradient { 
+            0% { background-position: 0% 50%; } 
+            50% { background-position: 100% 50%; } 
+            100% { background-position: 0% 50%; } 
+        }
+        
+        .glass-card { 
+            background: rgba(255, 255, 255, 0.25); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px); 
+            border: 1px solid rgba(255, 255, 255, 0.3); 
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2); 
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); 
+        }
+        
+        .dark-theme .glass-card {
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .glass-card-hover:hover { 
+            transform: translateY(-4px) scale(1.02); 
+            box-shadow: 0 14px 28px rgba(31, 38, 135, 0.25); 
+            background: rgba(255, 255, 255, 0.4); 
+        }
+        
+        .dark-theme .glass-card-hover:hover {
+            background: rgba(30, 41, 59, 0.6);
+        }
+        
         .hidden-view { display: none; }
-        .fade-in-up { animation: fadeInUp 0.5s ease-out forwards; opacity: 0; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .sortable-ghost { opacity: 0.4; background: #c8ebfb; }
-        .drag-handle { cursor: grab; } .drag-handle:active { cursor: grabbing; }
-        .category-title { font-size: 1.25rem; font-weight: 700; color: #374151; margin-top: 1.5rem; margin-bottom: 0.75rem; text-align: center; }
+        
+        .fade-in-up { 
+            animation: fadeInUp 0.5s ease-out forwards; 
+            opacity: 0; 
+        }
+        
+        @keyframes fadeInUp { 
+            from { opacity: 0; transform: translateY(20px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        
+        .sortable-ghost { 
+            opacity: 0.4; 
+            background: #c8ebfb; 
+        }
+        
+        .drag-handle { cursor: grab; } 
+        .drag-handle:active { cursor: grabbing; }
+        
+        .category-title { 
+            font-size: 1.25rem; 
+            font-weight: 700; 
+            color: #374151; 
+            margin-top: 1.5rem; 
+            margin-bottom: 0.75rem; 
+            text-align: center; 
+        }
+        
+        .dark-theme .category-title { color: #e2e8f0; }
+        
+        .link-button {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .link-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .link-button:hover::before {
+            left: 100%;
+        }
+        
+        .badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ef4444;
+            color: white;
+            border-radius: 9999px;
+            padding: 2px 6px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .nav-button.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        @media print {
+            body { background: white !important; }
+            .no-print { display: none !important; }
+        }
+        
+        .skeleton {
+            animation: skeleton-loading 1s linear infinite alternate;
+        }
+        
+        @keyframes skeleton-loading {
+            0% { background-color: hsl(200, 20%, 80%); }
+            100% { background-color: hsl(200, 20%, 95%); }
+        }
+        
+        /* Notification Badge */
+        .notification-badge {
+            position: relative;
+        }
+        
+        .notification-badge::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+        
+        /* Social Share Buttons */
+        .share-button {
+            transition: all 0.3s ease;
+        }
+        
+        .share-button:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
     </style>
 </head>
 
@@ -36,14 +235,56 @@
 
     <!-- === VIEW UTAMA (LINKTREE PUBLIK) === -->
     <div id="mainView">
-        <button id="adminLoginBtn" class="absolute top-4 left-4 glass-card px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-white/50 transition z-10"><i class="fa-solid fa-user-shield mr-2"></i>Admin</button>
-        <div class="w-full max-w-lg mx-auto mt-8 p-6 space-y-6">
+        <div class="absolute top-4 left-4 right-4 flex justify-between items-center z-10 no-print">
+            <button id="adminLoginBtn" class="glass-card px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-white/50 transition">
+                <i class="fa-solid fa-user-shield mr-2"></i>Admin
+            </button>
+            <div class="flex gap-2">
+                <button id="shareBtn" class="glass-card px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-white/50 transition">
+                    <i class="fa-solid fa-share-nodes"></i>
+                </button>
+                <button id="themeToggleBtn" class="glass-card px-4 py-2 rounded-lg font-semibold text-gray-700 hover:bg-white/50 transition">
+                    <i class="fa-solid fa-palette"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="w-full max-w-lg mx-auto mt-16 p-6 space-y-6">
             <header class="text-center mb-10 fade-in-up">
-                <img id="publicProfileImg" src="https://via.placeholder.com/150" alt="Foto Profil" class="w-32 h-32 rounded-full mx-auto object-cover border-4 border-white shadow-xl">
+                <div class="relative inline-block">
+                    <img id="publicProfileImg" src="https://via.placeholder.com/150" alt="Foto Profil" 
+                         class="w-32 h-32 rounded-full mx-auto object-cover border-4 border-white shadow-xl">
+                    <div id="onlineIndicator" class="absolute bottom-2 right-2 w-6 h-6 bg-green-500 rounded-full border-4 border-white"></div>
+                </div>
                 <h1 id="publicProfileName" class="text-4xl font-extrabold mt-4 text-gray-800 drop-shadow-lg"></h1>
                 <p id="publicProfileBio" class="text-xl font-light text-gray-700 mt-1"></p>
+                
+                <!-- Social Media Icons -->
+                <div id="socialMediaContainer" class="flex justify-center gap-4 mt-4"></div>
+                
+                <!-- Total Views Counter -->
+                <div class="mt-4 glass-card inline-block px-4 py-2 rounded-full">
+                    <i class="fa-solid fa-eye text-gray-600"></i>
+                    <span id="totalViewsCounter" class="ml-2 font-semibold text-gray-700">0</span>
+                    <span class="text-gray-600 text-sm ml-1">views</span>
+                </div>
             </header>
+            
+            <!-- Search Box -->
+            <div class="glass-card p-4 rounded-lg mb-4 no-print">
+                <div class="relative">
+                    <input id="searchInput" type="text" placeholder="🔍 Cari link..." 
+                           class="w-full px-4 py-2 bg-white/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                </div>
+            </div>
+            
             <div id="links-container" class="space-y-4"></div>
+            
+            <!-- Footer -->
+            <footer class="text-center mt-8 text-gray-600 text-sm no-print">
+                <p>Powered by Professional LinkTree</p>
+                <p class="mt-2">© <span id="currentYear"></span> All rights reserved</p>
+            </footer>
         </div>
     </div>
 
@@ -51,14 +292,37 @@
     <div id="loginView" class="hidden-view">
         <div class="min-h-screen flex items-center justify-center fade-in-up">
             <div class="glass-card w-full max-w-md p-8 rounded-2xl space-y-6">
-                <h2 class="text-3xl font-bold text-center text-gray-800">Login Admin</h2>
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-blue-500 rounded-full mx-auto flex items-center justify-center mb-4">
+                        <i class="fa-solid fa-lock text-white text-3xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800">Login Admin</h2>
+                    <p class="text-gray-600 mt-2">Masuk untuk mengelola link Anda</p>
+                </div>
                 <form id="loginForm" class="space-y-4">
-                    <input id="username" type="text" required placeholder="Username" class="w-full px-4 py-3 bg-white/50 border-2 border-transparent rounded-md focus:outline-none focus:border-blue-400 transition">
-                    <input id="password" type="password" required placeholder="Password" class="w-full px-4 py-3 bg-white/50 border-2 border-transparent rounded-md focus:outline-none focus:border-blue-400 transition">
-                    <button type="submit" class="w-full py-3 px-4 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition transform hover:scale-105">Masuk</button>
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Username</label>
+                        <input id="username" type="text" required placeholder="Masukkan username" 
+                               class="w-full px-4 py-3 mt-1 bg-white/50 border-2 border-transparent rounded-md focus:outline-none focus:border-blue-400 transition">
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Password</label>
+                        <div class="relative">
+                            <input id="password" type="password" required placeholder="Masukkan password" 
+                                   class="w-full px-4 py-3 mt-1 bg-white/50 border-2 border-transparent rounded-md focus:outline-none focus:border-blue-400 transition">
+                            <button type="button" id="togglePassword" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full py-3 px-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 transition transform hover:scale-105">
+                        <i class="fa-solid fa-right-to-bracket mr-2"></i>Masuk
+                    </button>
                     <p id="loginError" class="text-red-500 text-sm text-center"></p>
                 </form>
-                <button id="backToMainBtn" class="w-full text-center text-sm text-gray-600 hover:underline">Kembali ke Halaman Utama</button>
+                <button id="backToMainBtn" class="w-full text-center text-sm text-gray-600 hover:underline">
+                    <i class="fa-solid fa-arrow-left mr-2"></i>Kembali ke Halaman Utama
+                </button>
             </div>
         </div>
     </div>
@@ -66,46 +330,318 @@
     <!-- === VIEW ADMIN === -->
     <div id="adminView" class="hidden-view">
         <div class="flex flex-col md:flex-row h-screen bg-white/20">
+            <!-- Sidebar -->
             <aside class="w-full md:w-64 p-6 flex-shrink-0 flex flex-col glass-card">
-                <h2 class="text-2xl font-bold text-gray-800 mb-8">Admin Panel</h2>
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800">Admin Panel</h2>
+                    <p class="text-sm text-gray-600 mt-1">Kelola konten Anda</p>
+                </div>
+                
                 <nav class="flex flex-col space-y-2 mb-auto">
-                    <button id="manageLinksBtn" class="w-full py-2 px-4 text-left bg-blue-100 text-blue-800 font-semibold rounded-lg"><i class="fa-solid fa-link w-6"></i> Kelola Link</button>
-                    <button id="settingsBtn" class="w-full py-2 px-4 text-left text-gray-700 font-semibold rounded-lg hover:bg-gray-200"><i class="fa-solid fa-sliders w-6"></i> Pengaturan</button>
+                    <button id="dashboardBtn" class="nav-button w-full py-2 px-4 text-left text-gray-700 font-semibold rounded-lg hover:bg-gray-200 transition">
+                        <i class="fa-solid fa-chart-line w-6"></i> Dashboard
+                    </button>
+                    <button id="manageLinksBtn" class="nav-button w-full py-2 px-4 text-left bg-blue-100 text-blue-800 font-semibold rounded-lg">
+                        <i class="fa-solid fa-link w-6"></i> Kelola Link
+                    </button>
+                    <button id="analyticsBtn" class="nav-button w-full py-2 px-4 text-left text-gray-700 font-semibold rounded-lg hover:bg-gray-200 transition">
+                        <i class="fa-solid fa-chart-pie w-6"></i> Analytics
+                    </button>
+                    <button id="settingsBtn" class="nav-button w-full py-2 px-4 text-left text-gray-700 font-semibold rounded-lg hover:bg-gray-200">
+                        <i class="fa-solid fa-sliders w-6"></i> Pengaturan
+                    </button>
+                    <button id="socialBtn" class="nav-button w-full py-2 px-4 text-left text-gray-700 font-semibold rounded-lg hover:bg-gray-200 transition">
+                        <i class="fa-brands fa-instagram w-6"></i> Social Media
+                    </button>
+                    <button id="advancedBtn" class="nav-button w-full py-2 px-4 text-left text-gray-700 font-semibold rounded-lg hover:bg-gray-200 transition">
+                        <i class="fa-solid fa-gear w-6"></i> Advanced
+                    </button>
                 </nav>
+                
                 <div class="space-y-2">
-                    <button id="saveAndExitBtn" class="w-full py-2 px-4 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 transition"><i class="fa-solid fa-save mr-2"></i> Simpan & Keluar</button>
+                    <button id="saveAndExitBtn" class="w-full py-2 px-4 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 transition">
+                        <i class="fa-solid fa-save mr-2"></i> Simpan & Keluar
+                    </button>
                 </div>
             </aside>
 
+            <!-- Main Content -->
             <main class="flex-1 p-8 overflow-y-auto">
-                <div id="linkManagementContent">
-                    <h1 class="text-3xl font-bold mb-2 text-gray-800">Kelola Link</h1>
-                    <p class="text-gray-600 mb-6">Seret untuk mengurutkan, atau klik Edit untuk mengubah detail link.</p>
-                    <div id="admin-links-container" class="space-y-4"></div>
-                    <div id="pagination-controls" class="mt-6 flex justify-between items-center"></div>
-                    <button id="addNewLinkBtn" class="mt-6 py-2 px-4 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition"><i class="fa-solid fa-plus mr-2"></i> Tambah Link Baru</button>
-                </div>
-
-                <div id="settingsContent" class="hidden-view">
-                    <h1 class="text-3xl font-bold mb-6 text-gray-800">Pengaturan Profil</h1>
-                    <div class="space-y-6 glass-card p-6 rounded-lg max-w-2xl">
-                        <div class="flex items-center space-x-6">
-                            <img id="profileImagePreview" src="" class="w-24 h-24 rounded-full object-cover bg-gray-200 border-2 border-white">
-                            <div class="flex-1">
-                                <label for="profileImageInput" class="text-sm font-medium text-gray-700">URL Gambar Profil (Logo)</label>
-                                <input id="profileImageInput" type="text" placeholder="https://..." class="mt-1 block w-full px-3 py-2 bg-white/50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                
+                <!-- Dashboard Content -->
+                <div id="dashboardContent" class="hidden-view">
+                    <h1 class="text-3xl font-bold mb-6 text-gray-800">Dashboard</h1>
+                    
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="glass-card p-6 rounded-lg">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-600 text-sm">Total Links</p>
+                                    <p id="statsLinkCount" class="text-3xl font-bold text-gray-800 mt-2">0</p>
+                                </div>
+                                <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center">
+                                    <i class="fa-solid fa-link text-white text-xl"></i>
+                                </div>
                             </div>
                         </div>
-                        <div>
-                            <label for="profileNameInput" class="text-sm font-medium text-gray-700">Nama Tampilan</label>
-                            <input id="profileNameInput" type="text" class="mt-1 block w-full px-3 py-2 bg-white/50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        
+                        <div class="glass-card p-6 rounded-lg">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-600 text-sm">Total Views</p>
+                                    <p id="statsTotalViews" class="text-3xl font-bold text-gray-800 mt-2">0</p>
+                                </div>
+                                <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center">
+                                    <i class="fa-solid fa-eye text-white text-xl"></i>
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <label for="profileBioInput" class="text-sm font-medium text-gray-700">Bio Singkat (e.g., @username)</label>
-                            <input id="profileBioInput" type="text" class="mt-1 block w-full px-3 py-2 bg-white/50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        
+                        <div class="glass-card p-6 rounded-lg">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-600 text-sm">Total Clicks</p>
+                                    <p id="statsTotalClicks" class="text-3xl font-bold text-gray-800 mt-2">0</p>
+                                </div>
+                                <div class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center">
+                                    <i class="fa-solid fa-mouse-pointer text-white text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="glass-card p-6 rounded-lg mb-6">
+                        <h3 class="text-xl font-bold mb-4 text-gray-800">Quick Actions</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <button id="quickAddLink" class="p-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+                                <i class="fa-solid fa-plus text-2xl mb-2"></i>
+                                <p class="text-sm">Add Link</p>
+                            </button>
+                            <button id="quickQRCode" class="p-4 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition">
+                                <i class="fa-solid fa-qrcode text-2xl mb-2"></i>
+                                <p class="text-sm">QR Code</p>
+                            </button>
+                            <button id="quickExport" class="p-4 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
+                                <i class="fa-solid fa-download text-2xl mb-2"></i>
+                                <p class="text-sm">Export Data</p>
+                            </button>
+                            <button id="quickPreview" class="p-4 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition">
+                                <i class="fa-solid fa-eye text-2xl mb-2"></i>
+                                <p class="text-sm">Preview</p>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Activity -->
+                    <div class="glass-card p-6 rounded-lg">
+                        <h3 class="text-xl font-bold mb-4 text-gray-800">Recent Activity</h3>
+                        <div id="recentActivity" class="space-y-3">
+                            <p class="text-gray-600 text-sm">Belum ada aktivitas</p>
                         </div>
                     </div>
                 </div>
+                
+                <!-- Link Management Content -->
+                <div id="linkManagementContent">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-800">Kelola Link</h1>
+                            <p class="text-gray-600">Seret untuk mengurutkan, atau klik Edit untuk mengubah detail link.</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button id="bulkDeleteBtn" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
+                                <i class="fa-solid fa-trash mr-2"></i>Bulk Delete
+                            </button>
+                            <button id="exportLinksBtn" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+                                <i class="fa-solid fa-download mr-2"></i>Export
+                            </button>
+                            <button id="importLinksBtn" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
+                                <i class="fa-solid fa-upload mr-2"></i>Import
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Filter & Search -->
+                    <div class="glass-card p-4 rounded-lg mb-4 flex gap-4">
+                        <input id="adminSearchInput" type="text" placeholder="🔍 Search links..." 
+                               class="flex-1 px-4 py-2 bg-white/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                        <select id="categoryFilter" class="px-4 py-2 bg-white/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                            <option value="">All Categories</option>
+                        </select>
+                    </div>
+                    
+                    <div id="admin-links-container" class="space-y-4"></div>
+                    <div id="pagination-controls" class="mt-6 flex justify-between items-center"></div>
+                    <button id="addNewLinkBtn" class="mt-6 py-2 px-4 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition">
+                        <i class="fa-solid fa-plus mr-2"></i> Tambah Link Baru
+                    </button>
+                </div>
+
+                <!-- Analytics Content -->
+                <div id="analyticsContent" class="hidden-view">
+                    <h1 class="text-3xl font-bold mb-6 text-gray-800">Analytics</h1>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="glass-card p-6 rounded-lg">
+                            <h3 class="text-lg font-bold mb-4 text-gray-800">Click Statistics</h3>
+                            <canvas id="clicksChart"></canvas>
+                        </div>
+                        
+                        <div class="glass-card p-6 rounded-lg">
+                            <h3 class="text-lg font-bold mb-4 text-gray-800">Views Over Time</h3>
+                            <canvas id="viewsChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card p-6 rounded-lg">
+                        <h3 class="text-lg font-bold mb-4 text-gray-800">Top Performing Links</h3>
+                        <div id="topLinks" class="space-y-3"></div>
+                    </div>
+                </div>
+
+                <!-- Settings Content -->
+                <div id="settingsContent" class="hidden-view">
+                    <h1 class="text-3xl font-bold mb-6 text-gray-800">Pengaturan Profil</h1>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="glass-card p-6 rounded-lg">
+                            <h3 class="text-lg font-bold mb-4 text-gray-800">Profile Information</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center space-x-6">
+                                    <img id="profileImagePreview" src="" class="w-24 h-24 rounded-full object-cover bg-gray-200 border-2 border-white">
+                                    <div class="flex-1">
+                                        <label for="profileImageInput" class="text-sm font-medium text-gray-700">URL Gambar Profil (Logo)</label>
+                                        <input id="profileImageInput" type="text" placeholder="https://..." 
+                                               class="mt-1 block w-full px-3 py-2 bg-white/50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="profileNameInput" class="text-sm font-medium text-gray-700">Nama Tampilan</label>
+                                    <input id="profileNameInput" type="text" 
+                                           class="mt-1 block w-full px-3 py-2 bg-white/50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                <div>
+                                    <label for="profileBioInput" class="text-sm font-medium text-gray-700">Bio Singkat (e.g., @username)</label>
+                                    <input id="profileBioInput" type="text" 
+                                           class="mt-1 block w-full px-3 py-2 bg-white/50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card p-6 rounded-lg">
+                            <h3 class="text-lg font-bold mb-4 text-gray-800">Theme Settings</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700">Choose Theme</label>
+                                    <div class="grid grid-cols-2 gap-4 mt-2">
+                                        <button class="theme-option p-4 border-2 rounded-lg hover:border-blue-500 transition" data-theme="default">
+                                            <div class="w-full h-20 rounded-lg bg-gradient-to-br from-blue-200 to-yellow-100 mb-2"></div>
+                                            <p class="text-sm font-medium">Default</p>
+                                        </button>
+                                        <button class="theme-option p-4 border-2 rounded-lg hover:border-blue-500 transition" data-theme="dark-theme">
+                                            <div class="w-full h-20 rounded-lg bg-gradient-to-br from-gray-800 to-gray-900 mb-2"></div>
+                                            <p class="text-sm font-medium">Dark</p>
+                                        </button>
+                                        <button class="theme-option p-4 border-2 rounded-lg hover:border-blue-500 transition" data-theme="sunset-theme">
+                                            <div class="w-full h-20 rounded-lg bg-gradient-to-br from-red-400 to-yellow-300 mb-2"></div>
+                                            <p class="text-sm font-medium">Sunset</p>
+                                        </button>
+                                        <button class="theme-option p-4 border-2 rounded-lg hover:border-blue-500 transition" data-theme="forest-theme">
+                                            <div class="w-full h-20 rounded-lg bg-gradient-to-br from-green-600 to-green-300 mb-2"></div>
+                                            <p class="text-sm font-medium">Forest</p>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Social Media Content -->
+                <div id="socialContent" class="hidden-view">
+                    <h1 class="text-3xl font-bold mb-6 text-gray-800">Social Media Links</h1>
+                    
+                    <div class="glass-card p-6 rounded-lg">
+                        <p class="text-gray-600 mb-4">Tambahkan link social media Anda untuk ditampilkan di profil</p>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">Instagram</label>
+                                <input id="instagramInput" type="text" placeholder="https://instagram.com/username" 
+                                       class="mt-1 block w-full px-3 py-2 bg-white/50 border border-gray-300 rounded-md">
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">Facebook</label>
+                                <input id="facebookInput" type="text" placeholder="https://facebook.com/username" 
+                                       class="mt-1 block w-full px-3 py-2 bg-white/50 border border-gray-300 rounded-md">
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">Twitter/X</label>
+                                <input id="twitterInput" type="text" placeholder="https://twitter.com/username" 
+                                       class="mt-1 block w-full px-3 py-2 bg-white/50 border border-gray-300 rounded-md">
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">LinkedIn</label>
+                                <input id="linkedinInput" type="text" placeholder="https://linkedin.com/in/username" 
+                                       class="mt-1 block w-full px-3 py-2 bg-white/50 border border-gray-300 rounded-md">
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">TikTok</label>
+                                <input id="tiktokInput" type="text" placeholder="https://tiktok.com/@username" 
+                                       class="mt-1 block w-full px-3 py-2 bg-white/50 border border-gray-300 rounded-md">
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">YouTube</label>
+                                <input id="youtubeInput" type="text" placeholder="https://youtube.com/@username" 
+                                       class="mt-1 block w-full px-3 py-2 bg-white/50 border border-gray-300 rounded-md">
+                            </div>
+                        </div>
+                        
+                        <button id="saveSocialBtn" class="mt-6 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+                            <i class="fa-solid fa-save mr-2"></i>Simpan Social Media
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Advanced Settings -->
+                <div id="advancedContent" class="hidden-view">
+                    <h1 class="text-3xl font-bold mb-6 text-gray-800">Advanced Settings</h1>
+                    
+                    <div class="space-y-6">
+                        <div class="glass-card p-6 rounded-lg">
+                            <h3 class="text-lg font-bold mb-4 text-gray-800">QR Code</h3>
+                            <button id="generateQRBtn" class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+                                <i class="fa-solid fa-qrcode mr-2"></i>Generate QR Code
+                            </button>
+                            <div id="qrCodeContainer" class="mt-4 flex justify-center"></div>
+                        </div>
+                        
+                        <div class="glass-card p-6 rounded-lg">
+                            <h3 class="text-lg font-bold mb-4 text-gray-800">Data Management</h3>
+                            <div class="flex gap-4">
+                                <button id="exportAllDataBtn" class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
+                                    <i class="fa-solid fa-download mr-2"></i>Export All Data
+                                </button>
+                                <button id="importDataBtn" class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+                                    <i class="fa-solid fa-upload mr-2"></i>Import Data
+                                </button>
+                                <button id="resetAnalyticsBtn" class="px-6 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition">
+                                    <i class="fa-solid fa-rotate-right mr-2"></i>Reset Analytics
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card p-6 rounded-lg">
+                            <h3 class="text-lg font-bold mb-4 text-gray-800">Security</h3>
+                            <button id="changePasswordBtn" class="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
+                                <i class="fa-solid fa-key mr-2"></i>Change Password
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
             </main>
         </div>
     </div>
@@ -116,322 +652,1047 @@
 
     <script>
         // =================================================================================
-        // KONFIGURASI FIREBASE ANDA
-        // GANTI DENGAN KONFIGURASI DARI PROYEK FIREBASE ANDA
+        // KONFIGURASI FIREBASE
         // =================================================================================
         const firebaseConfig = {
-             apiKey: "AIzaSyD53FikQjDPnf8cVAgzXViNttYuF6qtNmU",
-  authDomain: "link-bod.firebaseapp.com",
-  projectId: "link-bod",
-  storageBucket: "link-bod.firebasestorage.app",
-  messagingSenderId: "563207613619",
-  appId: "1:563207613619:web:e52436e5778cd43cf2d4c6",
-  measurementId: "G-F4Z7LKV327"
+            apiKey: "AIzaSyD53FikQjDPnf8cVAgzXViNttYuF6qtNmU",
+            authDomain: "link-bod.firebaseapp.com",
+            projectId: "link-bod",
+            storageBucket: "link-bod.firebasestorage.app",
+            messagingSenderId: "563207613619",
+            appId: "1:563207613619:web:e52436e5778cd43cf2d4c6",
+            measurementId: "G-F4Z7LKV327"
         };
 
         // Inisialisasi Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const linksCollection = db.collection('links');
-        const profileDoc = db.collection('settings').doc('profile');
+        const profileDoc = db.collection('profile').doc('main');
+        const analyticsCollection = db.collection('analytics');
+        const socialMediaDoc = db.collection('settings').doc('socialMedia');
 
-        document.addEventListener('DOMContentLoaded', () => {
-            // === DOM ELEMENTS ===
-            const mainView = document.getElementById('mainView'), loginView = document.getElementById('loginView'), adminView = document.getElementById('adminView');
-            const linksContainer = document.getElementById('links-container'), adminLinksContainer = document.getElementById('admin-links-container');
-            const adminLoginBtn = document.getElementById('adminLoginBtn'), backToMainBtn = document.getElementById('backToMainBtn'), loginForm = document.getElementById('loginForm'), loginError = document.getElementById('loginError');
-            const publicProfileImg = document.getElementById('publicProfileImg'), publicProfileName = document.getElementById('publicProfileName'), publicProfileBio = document.getElementById('publicProfileBio');
-            const saveAndExitBtn = document.getElementById('saveAndExitBtn'), addNewLinkBtn = document.getElementById('addNewLinkBtn');
-            const manageLinksBtn = document.getElementById('manageLinksBtn'), settingsBtn = document.getElementById('settingsBtn');
-            const linkManagementContent = document.getElementById('linkManagementContent'), settingsContent = document.getElementById('settingsContent');
-            const profileNameInput = document.getElementById('profileNameInput'), profileBioInput = document.getElementById('profileBioInput'), profileImageInput = document.getElementById('profileImageInput'), profileImagePreview = document.getElementById('profileImagePreview');
-            const paginationControls = document.getElementById('pagination-controls');
+        // =================================================================================
+        // STATE & VARIABLES
+        // =================================================================================
+        let linksData = [];
+        let profileData = {};
+        let socialMediaData = {};
+        let analyticsData = {};
+        const itemsPerPage = 10;
+        let currentPage = 1;
+        let selectedTheme = 'default';
 
-            // === STATE & DATA ===
-            let linksData = [], profileData = {};
-            const ADMIN_USER = 'admin', ADMIN_PASS = 'password123'; // Login statis
-            let currentPage = 1, itemsPerPage = 5;
+        // =================================================================================
+        // DOM ELEMENTS
+        // =================================================================================
+        const mainView = document.getElementById('mainView');
+        const loginView = document.getElementById('loginView');
+        const adminView = document.getElementById('adminView');
+        
+        const adminLoginBtn = document.getElementById('adminLoginBtn');
+        const backToMainBtn = document.getElementById('backToMainBtn');
+        const loginForm = document.getElementById('loginForm');
+        const loginError = document.getElementById('loginError');
+        const username = document.getElementById('username');
+        const password = document.getElementById('password');
+        const togglePassword = document.getElementById('togglePassword');
+        
+        const publicProfileImg = document.getElementById('publicProfileImg');
+        const publicProfileName = document.getElementById('publicProfileName');
+        const publicProfileBio = document.getElementById('publicProfileBio');
+        const linksContainer = document.getElementById('links-container');
+        const searchInput = document.getElementById('searchInput');
+        const shareBtn = document.getElementById('shareBtn');
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const totalViewsCounter = document.getElementById('totalViewsCounter');
+        const socialMediaContainer = document.getElementById('socialMediaContainer');
+        
+        const dashboardBtn = document.getElementById('dashboardBtn');
+        const manageLinksBtn = document.getElementById('manageLinksBtn');
+        const analyticsBtn = document.getElementById('analyticsBtn');
+        const settingsBtn = document.getElementById('settingsBtn');
+        const socialBtn = document.getElementById('socialBtn');
+        const advancedBtn = document.getElementById('advancedBtn');
+        const saveAndExitBtn = document.getElementById('saveAndExitBtn');
+        
+        const dashboardContent = document.getElementById('dashboardContent');
+        const linkManagementContent = document.getElementById('linkManagementContent');
+        const analyticsContent = document.getElementById('analyticsContent');
+        const settingsContent = document.getElementById('settingsContent');
+        const socialContent = document.getElementById('socialContent');
+        const advancedContent = document.getElementById('advancedContent');
+        
+        const adminLinksContainer = document.getElementById('admin-links-container');
+        const addNewLinkBtn = document.getElementById('addNewLinkBtn');
+        const adminSearchInput = document.getElementById('adminSearchInput');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
+        const exportLinksBtn = document.getElementById('exportLinksBtn');
+        const importLinksBtn = document.getElementById('importLinksBtn');
+        
+        const profileImageInput = document.getElementById('profileImageInput');
+        const profileNameInput = document.getElementById('profileNameInput');
+        const profileBioInput = document.getElementById('profileBioInput');
+        const profileImagePreview = document.getElementById('profileImagePreview');
+        
+        const quickAddLink = document.getElementById('quickAddLink');
+        const quickQRCode = document.getElementById('quickQRCode');
+        const quickExport = document.getElementById('quickExport');
+        const quickPreview = document.getElementById('quickPreview');
+        
+        const generateQRBtn = document.getElementById('generateQRBtn');
+        const qrCodeContainer = document.getElementById('qrCodeContainer');
+        const exportAllDataBtn = document.getElementById('exportAllDataBtn');
+        const importDataBtn = document.getElementById('importDataBtn');
+        const resetAnalyticsBtn = document.getElementById('resetAnalyticsBtn');
+        const changePasswordBtn = document.getElementById('changePasswordBtn');
+        
+        const saveSocialBtn = document.getElementById('saveSocialBtn');
+        const instagramInput = document.getElementById('instagramInput');
+        const facebookInput = document.getElementById('facebookInput');
+        const twitterInput = document.getElementById('twitterInput');
+        const linkedinInput = document.getElementById('linkedinInput');
+        const tiktokInput = document.getElementById('tiktokInput');
+        const youtubeInput = document.getElementById('youtubeInput');
 
-            // === UI/UX FUNCTIONS ===
-            const showView = (view) => { [mainView, loginView, adminView].forEach(v => v.classList.add('hidden-view')); view.classList.remove('hidden-view'); };
-            const showAdminContent = (content) => {
-                [linkManagementContent, settingsContent].forEach(c => c.classList.add('hidden-view'));
-                content.classList.remove('hidden-view');
-                manageLinksBtn.classList.toggle('bg-blue-100', content === linkManagementContent);
-                settingsBtn.classList.toggle('bg-blue-100', content === settingsContent);
-            };
-            const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true });
+        // =================================================================================
+        // TOAST NOTIFICATION
+        // =================================================================================
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer);
+                toast.addEventListener('mouseleave', Swal.resumeTimer);
+            }
+        });
 
-            // === DATA MANAGEMENT (FIREBASE) ===
-            const loadData = async () => {
-                try {
-                    // Load Profile
-                    const doc = await profileDoc.get();
-                    if (doc.exists) {
-                        profileData = doc.data();
-                    } else {
-                        profileData = { name: 'Nama Anda', bio: '@username', imageUrl: 'https://via.placeholder.com/150' };
-                        // Buat dokumen profil jika belum ada
-                        await profileDoc.set(profileData);
-                    }
+        // =================================================================================
+        // UTILITY FUNCTIONS
+        // =================================================================================
+        
+        // Show/Hide Views
+        function showView(view) {
+            [mainView, loginView, adminView].forEach(v => v.classList.add('hidden-view'));
+            view.classList.remove('hidden-view');
+        }
 
-                    // Load Links
-                    const snapshot = await linksCollection.orderBy('order', 'asc').get();
-                    linksData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    
-                    renderPublicPage();
-
-                } catch (error) {
-                    console.error("Error loading data: ", error);
-                    Toast.fire({ icon: 'error', title: 'Gagal memuat data.' });
-                }
-            };
+        // Show Admin Content
+        function showAdminContent(content) {
+            [dashboardContent, linkManagementContent, analyticsContent, settingsContent, socialContent, advancedContent]
+                .forEach(c => c.classList.add('hidden-view'));
+            content.classList.remove('hidden-view');
             
-            // === RENDER FUNCTIONS (Tidak berubah signifikan) ===
-            const renderPublicPage = () => {
-                publicProfileImg.src = profileData.imageUrl;
-                publicProfileName.textContent = profileData.name;
-                publicProfileBio.textContent = profileData.bio;
-                linksContainer.innerHTML = '';
+            // Update active nav button
+            document.querySelectorAll('.nav-button').forEach(btn => {
+                btn.classList.remove('active', 'bg-blue-100', 'text-blue-800');
+                btn.classList.add('text-gray-700');
+            });
+            
+            const activeBtn = content.id === 'dashboardContent' ? dashboardBtn :
+                             content.id === 'linkManagementContent' ? manageLinksBtn :
+                             content.id === 'analyticsContent' ? analyticsBtn :
+                             content.id === 'settingsContent' ? settingsBtn :
+                             content.id === 'socialContent' ? socialBtn : advancedBtn;
+            
+            activeBtn.classList.add('active');
+            
+            // Load specific content
+            if (content.id === 'analyticsContent') {
+                loadAnalytics();
+            } else if (content.id === 'dashboardContent') {
+                loadDashboard();
+            }
+        }
 
-                const groupedLinks = linksData.reduce((acc, link) => {
-                    const category = link.category || 'Lainnya';
-                    if (!acc[category]) acc[category] = [];
-                    acc[category].push(link);
-                    return acc;
-                }, {});
+        // Theme Management
+        function setTheme(theme) {
+            document.body.className = 'min-h-screen p-4 ' + theme;
+            selectedTheme = theme;
+            localStorage.setItem('selectedTheme', theme);
+        }
 
-                Object.keys(groupedLinks).sort().forEach(category => {
-                    if (category !== 'Lainnya' || linksData.some(l => l.category)) {
-                        const titleEl = document.createElement('h2');
-                        titleEl.className = 'category-title fade-in-up';
-                        titleEl.textContent = category;
-                        linksContainer.appendChild(titleEl);
-                    }
-                    
-                    groupedLinks[category].forEach((link, index) => {
-                        const el = document.createElement('a');
-                        el.href = link.url;
-                        el.target = "_blank";
-                        el.rel = "noopener noreferrer";
-                        el.className = `glass-card glass-card-hover p-4 w-full flex items-center justify-center text-lg font-semibold text-gray-800 rounded-xl shadow-lg transform transition duration-300 fade-in-up`;
-                        el.style.animationDelay = `${index * 100}ms`;
-                        el.innerHTML = `<i class="${link.icon} w-6 text-center mr-3"></i><span>${link.name}</span>`;
-                        linksContainer.appendChild(el);
-                    });
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('selectedTheme') || 'default';
+            setTheme(savedTheme);
+        }
+
+        // Year Display
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // =================================================================================
+        // DATA LOADING
+        // =================================================================================
+        
+        async function loadData() {
+            try {
+                // Load Profile
+                const profileSnap = await profileDoc.get();
+                profileData = profileSnap.exists ? profileSnap.data() : { 
+                    name: 'Your Name', 
+                    bio: '@username', 
+                    imageUrl: 'https://via.placeholder.com/150' 
+                };
+                
+                // Load Links
+                const linksSnap = await linksCollection.orderBy('order', 'asc').get();
+                linksData = linksSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
+                // Load Social Media
+                const socialSnap = await socialMediaDoc.get();
+                socialMediaData = socialSnap.exists ? socialSnap.data() : {};
+                
+                // Load Analytics
+                const analyticsSnap = await analyticsCollection.doc('main').get();
+                analyticsData = analyticsSnap.exists ? analyticsSnap.data() : {
+                    totalViews: 0,
+                    totalClicks: 0,
+                    linkClicks: {}
+                };
+                
+                // Update displays
+                updatePublicView();
+                updateAdminInputs();
+                updateCategories();
+                trackPageView();
+                
+            } catch (error) {
+                console.error('Error loading data:', error);
+                Toast.fire({ icon: 'error', title: 'Gagal memuat data' });
+            }
+        }
+
+        // Track Page View
+        async function trackPageView() {
+            try {
+                analyticsData.totalViews = (analyticsData.totalViews || 0) + 1;
+                await analyticsCollection.doc('main').set(analyticsData, { merge: true });
+                totalViewsCounter.textContent = analyticsData.totalViews;
+            } catch (error) {
+                console.error('Error tracking view:', error);
+            }
+        }
+
+        // Track Link Click
+        async function trackLinkClick(linkId, linkName) {
+            try {
+                if (!analyticsData.linkClicks) analyticsData.linkClicks = {};
+                analyticsData.linkClicks[linkId] = (analyticsData.linkClicks[linkId] || 0) + 1;
+                analyticsData.totalClicks = (analyticsData.totalClicks || 0) + 1;
+                
+                await analyticsCollection.doc('main').set(analyticsData, { merge: true });
+                
+                // Log activity
+                await analyticsCollection.add({
+                    type: 'click',
+                    linkId: linkId,
+                    linkName: linkName,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
-            };
+            } catch (error) {
+                console.error('Error tracking click:', error);
+            }
+        }
 
-            const renderAdminPage = () => {
-                const startIndex = (currentPage - 1) * itemsPerPage;
-                const endIndex = startIndex + itemsPerPage;
-                const paginatedLinks = linksData.slice(startIndex, endIndex);
+        // =================================================================================
+        // PUBLIC VIEW RENDERING
+        // =================================================================================
+        
+        function updatePublicView() {
+            publicProfileImg.src = profileData.imageUrl || 'https://via.placeholder.com/150';
+            publicProfileName.textContent = profileData.name || 'Your Name';
+            publicProfileBio.textContent = profileData.bio || '@username';
+            totalViewsCounter.textContent = analyticsData.totalViews || 0;
+            
+            renderPublicLinks();
+            renderSocialMedia();
+        }
 
-                adminLinksContainer.innerHTML = '';
-                paginatedLinks.forEach((link) => {
-                    const el = document.createElement('div');
-                    el.className = 'glass-card p-4 rounded-lg';
-                    el.dataset.id = link.id;
-                    el.innerHTML = `
-                        <div class="view-mode flex items-center space-x-4">
-                            <span class="drag-handle text-gray-500 cursor-grab"><i class="fa-solid fa-grip-vertical"></i></span>
-                            <i class="${link.icon} w-6 text-center text-gray-600"></i>
-                            <div class="flex-1">
-                                <p class="font-semibold text-gray-800">${link.name}</p>
-                                <p class="text-sm text-gray-500">${link.category || 'Tanpa Kategori'}</p>
-                            </div>
-                            <button class="edit-btn p-2 text-blue-500 hover:text-blue-700 transition"><i class="fa-solid fa-pencil"></i></button>
-                            <button class="delete-btn p-2 text-red-500 hover:text-red-700 transition"><i class="fa-solid fa-trash"></i></button>
+        function renderPublicLinks(filterText = '') {
+            linksContainer.innerHTML = '';
+            
+            const filteredLinks = filterText ? 
+                linksData.filter(link => 
+                    link.name.toLowerCase().includes(filterText.toLowerCase()) ||
+                    (link.category && link.category.toLowerCase().includes(filterText.toLowerCase()))
+                ) : linksData;
+            
+            let currentCategory = '';
+            
+            filteredLinks.forEach((link, index) => {
+                if (link.category && link.category !== currentCategory) {
+                    currentCategory = link.category;
+                    const categoryDiv = document.createElement('div');
+                    categoryDiv.className = 'category-title';
+                    categoryDiv.textContent = currentCategory;
+                    linksContainer.appendChild(categoryDiv);
+                }
+                
+                const linkDiv = document.createElement('div');
+                linkDiv.className = 'glass-card glass-card-hover p-4 rounded-lg fade-in-up link-button relative';
+                linkDiv.style.animationDelay = `${index * 0.05}s`;
+                
+                const clicks = analyticsData.linkClicks?.[link.id] || 0;
+                
+                linkDiv.innerHTML = `
+                    <a href="${link.url}" target="_blank" class="flex items-center justify-between" onclick="trackLinkClick('${link.id}', '${link.name}')">
+                        <div class="flex items-center">
+                            <i class="${link.icon} text-2xl text-gray-700 mr-4"></i>
+                            <span class="font-semibold text-gray-800">${link.name}</span>
                         </div>
-                        <div class="edit-mode hidden-view space-y-3">
-                            <input type="text" placeholder="Nama Link" value="${link.name}" class="admin-link-name w-full p-2 bg-white/50 border rounded">
-                            <input type="text" placeholder="Ikon (e.g., fa-brands fa-x-twitter)" value="${link.icon}" class="admin-link-icon w-full p-2 bg-white/50 border rounded">
-                            <input type="text" placeholder="URL Lengkap" value="${link.url}" class="admin-link-url w-full p-2 bg-white/50 border rounded">
-                            <input type="text" placeholder="Kategori (opsional)" value="${link.category || ''}" class="admin-link-category w-full p-2 bg-white/50 border rounded">
-                            <div class="flex justify-end space-x-2">
-                                <button class="cancel-edit-btn py-1 px-3 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">Batal</button>
-                                <button class="save-link-btn py-1 px-3 bg-green-500 text-white rounded hover:bg-green-600">Simpan</button>
+                        <div class="flex items-center gap-3">
+                            ${clicks > 0 ? `<span class="text-xs text-gray-600 bg-white/50 px-2 py-1 rounded-full">${clicks} clicks</span>` : ''}
+                            <i class="fa-solid fa-arrow-right text-gray-600"></i>
+                        </div>
+                    </a>
+                `;
+                
+                linksContainer.appendChild(linkDiv);
+            });
+            
+            if (filteredLinks.length === 0) {
+                linksContainer.innerHTML = '<p class="text-center text-gray-600">Tidak ada link yang ditemukan</p>';
+            }
+        }
+
+        function renderSocialMedia() {
+            socialMediaContainer.innerHTML = '';
+            
+            const socialPlatforms = [
+                { key: 'instagram', icon: 'fa-brands fa-instagram', color: '#E4405F' },
+                { key: 'facebook', icon: 'fa-brands fa-facebook', color: '#1877F2' },
+                { key: 'twitter', icon: 'fa-brands fa-x-twitter', color: '#000000' },
+                { key: 'linkedin', icon: 'fa-brands fa-linkedin', color: '#0A66C2' },
+                { key: 'tiktok', icon: 'fa-brands fa-tiktok', color: '#000000' },
+                { key: 'youtube', icon: 'fa-brands fa-youtube', color: '#FF0000' }
+            ];
+            
+            socialPlatforms.forEach(platform => {
+                if (socialMediaData[platform.key]) {
+                    const link = document.createElement('a');
+                    link.href = socialMediaData[platform.key];
+                    link.target = '_blank';
+                    link.className = 'share-button w-10 h-10 rounded-full flex items-center justify-center text-white';
+                    link.style.backgroundColor = platform.color;
+                    link.innerHTML = `<i class="${platform.icon}"></i>`;
+                    socialMediaContainer.appendChild(link);
+                }
+            });
+        }
+
+        // =================================================================================
+        // ADMIN VIEW RENDERING
+        // =================================================================================
+        
+        function updateAdminInputs() {
+            profileImageInput.value = profileData.imageUrl || '';
+            profileNameInput.value = profileData.name || '';
+            profileBioInput.value = profileData.bio || '';
+            profileImagePreview.src = profileData.imageUrl || 'https://via.placeholder.com/150';
+            
+            instagramInput.value = socialMediaData.instagram || '';
+            facebookInput.value = socialMediaData.facebook || '';
+            twitterInput.value = socialMediaData.twitter || '';
+            linkedinInput.value = socialMediaData.linkedin || '';
+            tiktokInput.value = socialMediaData.tiktok || '';
+            youtubeInput.value = socialMediaData.youtube || '';
+        }
+
+        function renderAdminPage(filterText = '', category = '') {
+            adminLinksContainer.innerHTML = '';
+            
+            let filteredLinks = linksData;
+            
+            if (filterText) {
+                filteredLinks = filteredLinks.filter(link => 
+                    link.name.toLowerCase().includes(filterText.toLowerCase()) ||
+                    link.url.toLowerCase().includes(filterText.toLowerCase())
+                );
+            }
+            
+            if (category) {
+                filteredLinks = filteredLinks.filter(link => link.category === category);
+            }
+            
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageLinks = filteredLinks.slice(start, end);
+            
+            pageLinks.forEach((link) => {
+                const linkDiv = document.createElement('div');
+                linkDiv.className = 'glass-card p-4 rounded-lg';
+                linkDiv.dataset.id = link.id;
+                
+                const clicks = analyticsData.linkClicks?.[link.id] || 0;
+                
+                linkDiv.innerHTML = `
+                    <div class="view-mode">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center flex-1">
+                                <i class="drag-handle fa-solid fa-grip-vertical text-gray-400 mr-3 cursor-grab"></i>
+                                <i class="${link.icon} text-xl text-gray-700 mr-3"></i>
+                                <div class="flex-1">
+                                    <p class="font-semibold text-gray-800">${link.name}</p>
+                                    <p class="text-sm text-gray-600">${link.url}</p>
+                                    ${link.category ? `<span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">${link.category}</span>` : ''}
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm text-gray-600 bg-white/50 px-3 py-1 rounded-full">
+                                    <i class="fa-solid fa-mouse-pointer mr-1"></i>${clicks}
+                                </span>
+                                <button class="edit-btn px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition">
+                                    <i class="fa-solid fa-edit"></i>
+                                </button>
+                                <button class="delete-btn px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
                             </div>
                         </div>
-                    `;
-                    adminLinksContainer.appendChild(el);
-                });
-                renderPaginationControls();
-                profileNameInput.value = profileData.name;
-                profileBioInput.value = profileData.bio;
-                profileImageInput.value = profileData.imageUrl;
-                profileImagePreview.src = profileData.imageUrl;
-            };
-
-            const renderPaginationControls = () => {
-                const totalPages = Math.ceil(linksData.length / itemsPerPage);
-                paginationControls.innerHTML = `
-                    <div class="flex items-center space-x-2">
-                        <label for="itemsPerPage" class="text-sm text-gray-600">Item per halaman:</label>
-                        <select id="itemsPerPage" class="bg-white/50 border rounded p-1 text-sm">
-                            <option value="5" ${itemsPerPage === 5 ? 'selected' : ''}>5</option>
-                            <option value="10" ${itemsPerPage === 10 ? 'selected' : ''}>10</option>
-                            <option value="15" ${itemsPerPage === 15 ? 'selected' : ''}>15</option>
-                        </select>
                     </div>
-                    <div class="flex items-center space-x-2">
-                        <button id="prevPageBtn" class="px-3 py-1 bg-white/50 rounded disabled:opacity-50" ${currentPage === 1 ? 'disabled' : ''}><i class="fa-solid fa-chevron-left"></i></button>
-                        <span class="text-sm text-gray-700 font-semibold">Halaman ${currentPage} dari ${totalPages || 1}</span>
-                        <button id="nextPageBtn" class="px-3 py-1 bg-white/50 rounded disabled:opacity-50" ${currentPage === totalPages || totalPages === 0 ? 'disabled' : ''}><i class="fa-solid fa-chevron-right"></i></button>
+                    <div class="edit-mode hidden-view">
+                        <div class="space-y-3">
+                            <input class="admin-link-name w-full px-3 py-2 bg-white/50 border rounded" value="${link.name}" placeholder="Nama Link">
+                            <input class="admin-link-icon w-full px-3 py-2 bg-white/50 border rounded" value="${link.icon}" placeholder="Ikon (Font Awesome class)">
+                            <input class="admin-link-url w-full px-3 py-2 bg-white/50 border rounded" value="${link.url}" placeholder="URL">
+                            <input class="admin-link-category w-full px-3 py-2 bg-white/50 border rounded" value="${link.category || ''}" placeholder="Kategori (opsional)">
+                            <div class="flex gap-2">
+                                <button class="save-link-btn flex-1 py-2 bg-green-500 text-white rounded hover:bg-green-600">Simpan</button>
+                                <button class="cancel-edit-btn flex-1 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">Batal</button>
+                            </div>
+                        </div>
                     </div>
                 `;
-                document.getElementById('itemsPerPage').addEventListener('change', (e) => { itemsPerPage = parseInt(e.target.value); currentPage = 1; renderAdminPage(); });
-                document.getElementById('prevPageBtn')?.addEventListener('click', () => { if (currentPage > 1) { currentPage--; renderAdminPage(); } });
-                document.getElementById('nextPageBtn')?.addEventListener('click', () => { const totalPages = Math.ceil(linksData.length / itemsPerPage); if (currentPage < totalPages) { currentPage++; renderAdminPage(); } });
-            };
-
-            // === EVENT HANDLERS ===
-            const handleLogin = (e) => {
-                e.preventDefault();
-                if (e.target.username.value === ADMIN_USER && e.target.password.value === ADMIN_PASS) {
-                    loginError.textContent = '';
-                    currentPage = 1; // Reset ke halaman 1 saat login
-                    renderAdminPage();
-                    showAdminContent(linkManagementContent);
-                    showView(adminView);
-                } else {
-                    loginError.textContent = 'Username atau password salah.';
-                }
-            };
-
-            const handleAdminContainerClick = async (e) => {
-                const linkItem = e.target.closest('.glass-card');
-                if (!linkItem) return;
-                const linkId = linkItem.dataset.id;
                 
-                if (e.target.closest('.edit-btn')) {
-                    linkItem.querySelector('.view-mode').classList.add('hidden-view');
-                    linkItem.querySelector('.edit-mode').classList.remove('hidden-view');
+                adminLinksContainer.appendChild(linkDiv);
+            });
+            
+            renderPagination(filteredLinks.length);
+        }
+
+        function renderPagination(totalItems) {
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            const paginationControls = document.getElementById('pagination-controls');
+            
+            if (totalPages <= 1) {
+                paginationControls.innerHTML = '';
+                return;
+            }
+            
+            let html = '<div class="flex gap-2">';
+            
+            if (currentPage > 1) {
+                html += `<button onclick="changePage(${currentPage - 1})" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Previous</button>`;
+            }
+            
+            html += `<span class="px-4 py-2 bg-white/50 rounded">Page ${currentPage} of ${totalPages}</span>`;
+            
+            if (currentPage < totalPages) {
+                html += `<button onclick="changePage(${currentPage + 1})" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Next</button>`;
+            }
+            
+            html += '</div>';
+            paginationControls.innerHTML = html;
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            renderAdminPage();
+        }
+
+        function updateCategories() {
+            const categories = [...new Set(linksData.map(link => link.category).filter(Boolean))];
+            categoryFilter.innerHTML = '<option value="">All Categories</option>';
+            categories.forEach(cat => {
+                categoryFilter.innerHTML += `<option value="${cat}">${cat}</option>`;
+            });
+        }
+
+        // =================================================================================
+        // DASHBOARD
+        // =================================================================================
+        
+        function loadDashboard() {
+            document.getElementById('statsLinkCount').textContent = linksData.length;
+            document.getElementById('statsTotalViews').textContent = analyticsData.totalViews || 0;
+            document.getElementById('statsTotalClicks').textContent = analyticsData.totalClicks || 0;
+            
+            loadRecentActivity();
+        }
+
+        async function loadRecentActivity() {
+            try {
+                const snapshot = await analyticsCollection
+                    .orderBy('timestamp', 'desc')
+                    .limit(5)
+                    .get();
+                
+                const container = document.getElementById('recentActivity');
+                container.innerHTML = '';
+                
+                if (snapshot.empty) {
+                    container.innerHTML = '<p class="text-gray-600 text-sm">Belum ada aktivitas</p>';
+                    return;
                 }
-                if (e.target.closest('.cancel-edit-btn')) {
-                    renderAdminPage(); // render ulang untuk membatalkan
-                }
-                if (e.target.closest('.save-link-btn')) {
-                    const updatedLinkData = {
-                        name: linkItem.querySelector('.admin-link-name').value,
-                        icon: linkItem.querySelector('.admin-link-icon').value,
-                        url: linkItem.querySelector('.admin-link-url').value,
-                        category: linkItem.querySelector('.admin-link-category').value,
-                    };
-                    try {
-                        await linksCollection.doc(linkId).update(updatedLinkData);
-                        const index = linksData.findIndex(l => l.id === linkId);
-                        linksData[index] = { ...linksData[index], ...updatedLinkData };
-                        renderAdminPage();
-                        Toast.fire({ icon: 'success', title: 'Link diperbarui!' });
-                    } catch (error) {
-                        Toast.fire({ icon: 'error', title: 'Gagal memperbarui link.' });
-                        console.error(error);
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const div = document.createElement('div');
+                    div.className = 'flex items-center gap-3 p-3 bg-white/30 rounded-lg';
+                    div.innerHTML = `
+                        <i class="fa-solid fa-mouse-pointer text-blue-500"></i>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium">${data.linkName}</p>
+                            <p class="text-xs text-gray-600">${data.timestamp ? new Date(data.timestamp.toDate()).toLocaleString() : 'Just now'}</p>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            } catch (error) {
+                console.error('Error loading activity:', error);
+            }
+        }
+
+        // =================================================================================
+        // ANALYTICS
+        // =================================================================================
+        
+        function loadAnalytics() {
+            renderClicksChart();
+            renderTopLinks();
+        }
+
+        function renderClicksChart() {
+            const ctx = document.getElementById('clicksChart');
+            if (!ctx) return;
+            
+            const linkNames = linksData.map(link => link.name.substring(0, 15));
+            const clickCounts = linksData.map(link => analyticsData.linkClicks?.[link.id] || 0);
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: linkNames,
+                    datasets: [{
+                        label: 'Clicks',
+                        data: clickCounts,
+                        backgroundColor: 'rgba(59, 130, 246, 0.6)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        y: { beginAtZero: true }
                     }
                 }
-                if (e.target.closest('.delete-btn')) {
-                    Swal.fire({
-                        title: 'Anda yakin?', text: "Link ini akan dihapus permanen!", icon: 'warning',
-                        showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#3085d6',
-                        confirmButtonText: 'Ya, hapus!', cancelButtonText: 'Batal'
-                    }).then(async (result) => {
-                        if (result.isConfirmed) {
-                             try {
-                                await linksCollection.doc(linkId).delete();
-                                linksData = linksData.filter(l => l.id !== linkId);
-                                if (linksData.length > 0 && (currentPage - 1) * itemsPerPage >= linksData.length) {
-                                    currentPage--;
-                                }
-                                renderAdminPage();
-                                Toast.fire({ icon: 'success', title: 'Link berhasil dihapus.' });
-                            } catch (error) {
-                                Toast.fire({ icon: 'error', title: 'Gagal menghapus link.' });
-                                console.error(error);
-                            }
-                        }
-                    });
+            });
+        }
+
+        function renderTopLinks() {
+            const container = document.getElementById('topLinks');
+            container.innerHTML = '';
+            
+            const sortedLinks = [...linksData].sort((a, b) => {
+                const aClicks = analyticsData.linkClicks?.[a.id] || 0;
+                const bClicks = analyticsData.linkClicks?.[b.id] || 0;
+                return bClicks - aClicks;
+            }).slice(0, 5);
+            
+            sortedLinks.forEach((link, index) => {
+                const clicks = analyticsData.linkClicks?.[link.id] || 0;
+                const div = document.createElement('div');
+                div.className = 'flex items-center justify-between p-3 bg-white/30 rounded-lg';
+                div.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="text-2xl font-bold text-gray-400">${index + 1}</span>
+                        <i class="${link.icon} text-xl text-gray-700"></i>
+                        <span class="font-medium">${link.name}</span>
+                    </div>
+                    <span class="text-lg font-bold text-blue-600">${clicks} clicks</span>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // =================================================================================
+        // EVENT HANDLERS
+        // =================================================================================
+        
+        async function handleLogin(e) {
+            e.preventDefault();
+            const user = username.value;
+            const pass = password.value;
+            
+            if (user === 'admin' && pass === 'admin123') {
+                showView(adminView);
+                showAdminContent(linkManagementContent);
+                renderAdminPage();
+                Toast.fire({ icon: 'success', title: 'Login berhasil!' });
+            } else {
+                loginError.textContent = 'Username atau password salah!';
+                Toast.fire({ icon: 'error', title: 'Login gagal!' });
+            }
+        }
+
+        async function handleAdminContainerClick(e) {
+            const linkItem = e.target.closest('[data-id]');
+            if (!linkItem) return;
+            
+            const linkId = linkItem.dataset.id;
+            
+            if (e.target.closest('.edit-btn')) {
+                linkItem.querySelector('.view-mode').classList.add('hidden-view');
+                linkItem.querySelector('.edit-mode').classList.remove('hidden-view');
+            }
+            
+            if (e.target.closest('.cancel-edit-btn')) {
+                renderAdminPage();
+            }
+            
+            if (e.target.closest('.save-link-btn')) {
+                const updatedLinkData = {
+                    name: linkItem.querySelector('.admin-link-name').value,
+                    icon: linkItem.querySelector('.admin-link-icon').value,
+                    url: linkItem.querySelector('.admin-link-url').value,
+                    category: linkItem.querySelector('.admin-link-category').value,
+                };
+                
+                try {
+                    await linksCollection.doc(linkId).update(updatedLinkData);
+                    const index = linksData.findIndex(l => l.id === linkId);
+                    linksData[index] = { ...linksData[index], ...updatedLinkData };
+                    renderAdminPage();
+                    updateCategories();
+                    Toast.fire({ icon: 'success', title: 'Link diperbarui!' });
+                } catch (error) {
+                    Toast.fire({ icon: 'error', title: 'Gagal memperbarui link.' });
+                    console.error(error);
                 }
+            }
+            
+            if (e.target.closest('.delete-btn')) {
+                Swal.fire({
+                    title: 'Anda yakin?',
+                    text: "Link ini akan dihapus permanen!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then(async (result) => {
+                    if (result.isConfirmed) {
+                        try {
+                            await linksCollection.doc(linkId).delete();
+                            linksData = linksData.filter(l => l.id !== linkId);
+                            if (linksData.length > 0 && (currentPage - 1) * itemsPerPage >= linksData.length) {
+                                currentPage--;
+                            }
+                            renderAdminPage();
+                            updateCategories();
+                            Toast.fire({ icon: 'success', title: 'Link berhasil dihapus.' });
+                        } catch (error) {
+                            Toast.fire({ icon: 'error', title: 'Gagal menghapus link.' });
+                            console.error(error);
+                        }
+                    }
+                });
+            }
+        }
+
+        async function handleAddNewLink() {
+            try {
+                const highestOrder = linksData.reduce((max, link) => link.order > max ? link.order : max, -1);
+                const newLink = {
+                    name: 'Link Baru',
+                    url: '#',
+                    icon: 'fa-solid fa-link',
+                    category: '',
+                    order: highestOrder + 1
+                };
+                
+                const docRef = await linksCollection.add(newLink);
+                linksData.push({ id: docRef.id, ...newLink });
+                currentPage = Math.ceil(linksData.length / itemsPerPage);
+                renderAdminPage();
+                
+                const newItem = adminLinksContainer.querySelector(`[data-id='${docRef.id}']`);
+                newItem?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                newItem?.querySelector('.edit-btn').click();
+                
+                Toast.fire({ icon: 'success', title: 'Link baru ditambahkan!' });
+            } catch (error) {
+                Toast.fire({ icon: 'error', title: 'Gagal menambah link.' });
+                console.error(error);
+            }
+        }
+
+        async function handleSaveAndExit() {
+            const newProfileData = {
+                name: profileNameInput.value,
+                bio: profileBioInput.value,
+                imageUrl: profileImageInput.value
             };
             
-            const handleAddNewLink = async () => {
-                try {
-                    // Tentukan 'order' untuk link baru. Ambil order tertinggi + 1.
-                    const highestOrder = linksData.reduce((max, link) => link.order > max ? link.order : max, -1);
-                    const newLink = { 
-                        name: 'Link Baru', url: '#', icon: 'fa-solid fa-link', category: '',
-                        order: highestOrder + 1
-                    };
-                    const docRef = await linksCollection.add(newLink);
-                    linksData.push({ id: docRef.id, ...newLink });
-                    currentPage = Math.ceil(linksData.length / itemsPerPage);
-                    renderAdminPage();
-                    const newItem = adminLinksContainer.querySelector(`[data-id='${docRef.id}']`);
-                    newItem?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    newItem?.querySelector('.edit-btn').click();
-                } catch (error) {
-                    Toast.fire({ icon: 'error', title: 'Gagal menambah link.'});
-                    console.error(error);
-                }
+            try {
+                await profileDoc.set(newProfileData, { merge: true });
+                Toast.fire({ icon: 'success', title: 'Perubahan disimpan!' });
+                await loadData();
+                showView(mainView);
+            } catch (error) {
+                Toast.fire({ icon: 'error', title: 'Gagal menyimpan pengaturan.' });
+                console.error(error);
+            }
+        }
+
+        async function handleSaveSocial() {
+            const socialData = {
+                instagram: instagramInput.value,
+                facebook: facebookInput.value,
+                twitter: twitterInput.value,
+                linkedin: linkedinInput.value,
+                tiktok: tiktokInput.value,
+                youtube: youtubeInput.value
             };
+            
+            try {
+                await socialMediaDoc.set(socialData, { merge: true });
+                socialMediaData = socialData;
+                renderSocialMedia();
+                Toast.fire({ icon: 'success', title: 'Social media disimpan!' });
+            } catch (error) {
+                Toast.fire({ icon: 'error', title: 'Gagal menyimpan social media.' });
+                console.error(error);
+            }
+        }
 
-            const handleSaveAndExit = async () => {
-                const newProfileData = { 
-                    name: profileNameInput.value, 
-                    bio: profileBioInput.value, 
-                    imageUrl: profileImageInput.value 
-                };
-                try {
-                    await profileDoc.set(newProfileData, { merge: true });
-                    Toast.fire({ icon: 'success', title: 'Perubahan disimpan!' });
-                    await loadData(); // Muat ulang semua data untuk sinkronisasi
-                    showView(mainView);
-                } catch(error) {
-                    Toast.fire({ icon: 'error', title: 'Gagal menyimpan pengaturan.' });
-                    console.error(error);
-                }
-            };
+        // Export/Import Functions
+        function exportLinks() {
+            const dataStr = JSON.stringify(linksData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'links_backup.json';
+            link.click();
+            Toast.fire({ icon: 'success', title: 'Data berhasil diekspor!' });
+        }
 
-            // === INITIALIZATION ===
-            adminLoginBtn.addEventListener('click', () => showView(loginView));
-            backToMainBtn.addEventListener('click', () => showView(mainView));
-            loginForm.addEventListener('submit', handleLogin);
-            addNewLinkBtn.addEventListener('click', handleAddNewLink);
-            saveAndExitBtn.addEventListener('click', handleSaveAndExit);
-            manageLinksBtn.addEventListener('click', () => showAdminContent(linkManagementContent));
-            settingsBtn.addEventListener('click', () => showAdminContent(settingsContent));
-            profileImageInput.addEventListener('input', () => profileImagePreview.src = profileImageInput.value);
-            adminLinksContainer.addEventListener('click', handleAdminContainerClick);
-
-            new Sortable(adminLinksContainer, {
-                animation: 150, ghostClass: 'sortable-ghost', handle: '.drag-handle',
-                onEnd: async (evt) => {
-                    const pageStartIndex = (currentPage - 1) * itemsPerPage;
-                    const [movedItem] = linksData.splice(pageStartIndex + evt.oldDraggableIndex, 1);
-                    linksData.splice(pageStartIndex + evt.newDraggableIndex, 0, movedItem);
-
-                    const batch = db.batch();
-                    linksData.forEach((link, index) => {
-                        link.order = index;
-                        const docRef = linksCollection.doc(link.id);
-                        batch.update(docRef, { order: index });
-                    });
-                    
+        function importLinks() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = async (event) => {
                     try {
-                        await batch.commit();
-                        renderAdminPage();
+                        const importedLinks = JSON.parse(event.target.result);
+                        
+                        const result = await Swal.fire({
+                            title: 'Import Data',
+                            text: `Akan mengimpor ${importedLinks.length} link. Lanjutkan?`,
+                            icon: 'question',
+                            showCancelButton: true,
+                            confirmButtonText: 'Ya, import!',
+                            cancelButtonText: 'Batal'
+                        });
+                        
+                        if (result.isConfirmed) {
+                            for (const link of importedLinks) {
+                                delete link.id;
+                                await linksCollection.add(link);
+                            }
+                            await loadData();
+                            renderAdminPage();
+                            Toast.fire({ icon: 'success', title: 'Data berhasil diimpor!' });
+                        }
                     } catch (error) {
-                        Toast.fire({ icon: 'error', title: 'Gagal menyimpan urutan.'});
+                        Toast.fire({ icon: 'error', title: 'Format file tidak valid!' });
                         console.error(error);
-                        await loadData(); // Rollback jika gagal
-                        renderAdminPage();
                     }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        function exportAllData() {
+            const allData = {
+                profile: profileData,
+                links: linksData,
+                socialMedia: socialMediaData,
+                analytics: analyticsData,
+                exportDate: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(allData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `linktree_backup_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            Toast.fire({ icon: 'success', title: 'Semua data berhasil diekspor!' });
+        }
+
+        function generateQRCode() {
+            qrCodeContainer.innerHTML = '';
+            const currentURL = window.location.href.split('?')[0];
+            
+            const qrDiv = document.createElement('div');
+            qrCodeContainer.appendChild(qrDiv);
+            
+            new QRCode(qrDiv, {
+                text: currentURL,
+                width: 256,
+                height: 256,
+                colorDark: '#000000',
+                colorLight: '#ffffff',
+            });
+            
+            Toast.fire({ icon: 'success', title: 'QR Code berhasil dibuat!' });
+        }
+
+        function shareProfile() {
+            const url = window.location.href;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: profileData.name,
+                    text: `Check out my links!`,
+                    url: url
+                }).then(() => {
+                    Toast.fire({ icon: 'success', title: 'Berhasil dibagikan!' });
+                }).catch(console.error);
+            } else {
+                navigator.clipboard.writeText(url).then(() => {
+                    Toast.fire({ icon: 'success', title: 'Link disalin ke clipboard!' });
+                });
+            }
+        }
+
+        async function resetAnalytics() {
+            const result = await Swal.fire({
+                title: 'Reset Analytics?',
+                text: 'Semua data analytics akan dihapus!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Ya, reset!',
+                cancelButtonText: 'Batal'
+            });
+            
+            if (result.isConfirmed) {
+                try {
+                    await analyticsCollection.doc('main').set({
+                        totalViews: 0,
+                        totalClicks: 0,
+                        linkClicks: {}
+                    });
+                    analyticsData = { totalViews: 0, totalClicks: 0, linkClicks: {} };
+                    Toast.fire({ icon: 'success', title: 'Analytics direset!' });
+                    loadDashboard();
+                } catch (error) {
+                    Toast.fire({ icon: 'error', title: 'Gagal mereset analytics.' });
+                }
+            }
+        }
+
+        async function changePassword() {
+            const { value: formValues } = await Swal.fire({
+                title: 'Change Password',
+                html:
+                    '<input id="swal-input1" class="swal2-input" type="password" placeholder="Password Baru">' +
+                    '<input id="swal-input2" class="swal2-input" type="password" placeholder="Konfirmasi Password">',
+                focusConfirm: false,
+                showCancelButton: true,
+                preConfirm: () => {
+                    return [
+                        document.getElementById('swal-input1').value,
+                        document.getElementById('swal-input2').value
+                    ];
                 }
             });
+            
+            if (formValues) {
+                if (formValues[0] === formValues[1]) {
+                    Toast.fire({ icon: 'success', title: 'Password berhasil diubah! (Demo only)' });
+                } else {
+                    Toast.fire({ icon: 'error', title: 'Password tidak cocok!' });
+                }
+            }
+        }
 
-            loadData().then(() => {
-                showView(mainView);
+        // =================================================================================
+        // EVENT LISTENERS
+        // =================================================================================
+        
+        adminLoginBtn.addEventListener('click', () => showView(loginView));
+        backToMainBtn.addEventListener('click', () => showView(mainView));
+        loginForm.addEventListener('submit', handleLogin);
+        
+        togglePassword.addEventListener('click', () => {
+            const type = password.type === 'password' ? 'text' : 'password';
+            password.type = type;
+            togglePassword.innerHTML = type === 'password' ? '<i class="fa-solid fa-eye"></i>' : '<i class="fa-solid fa-eye-slash"></i>';
+        });
+        
+        addNewLinkBtn.addEventListener('click', handleAddNewLink);
+        saveAndExitBtn.addEventListener('click', handleSaveAndExit);
+        
+        dashboardBtn.addEventListener('click', () => showAdminContent(dashboardContent));
+        manageLinksBtn.addEventListener('click', () => showAdminContent(linkManagementContent));
+        analyticsBtn.addEventListener('click', () => showAdminContent(analyticsContent));
+        settingsBtn.addEventListener('click', () => showAdminContent(settingsContent));
+        socialBtn.addEventListener('click', () => showAdminContent(socialContent));
+        advancedBtn.addEventListener('click', () => showAdminContent(advancedContent));
+        
+        profileImageInput.addEventListener('input', () => {
+            profileImagePreview.src = profileImageInput.value || 'https://via.placeholder.com/150';
+        });
+        
+        adminLinksContainer.addEventListener('click', handleAdminContainerClick);
+        
+        searchInput.addEventListener('input', (e) => {
+            renderPublicLinks(e.target.value);
+        });
+        
+        adminSearchInput.addEventListener('input', (e) => {
+            renderAdminPage(e.target.value, categoryFilter.value);
+        });
+        
+        categoryFilter.addEventListener('change', (e) => {
+            renderAdminPage(adminSearchInput.value, e.target.value);
+        });
+        
+        shareBtn.addEventListener('click', shareProfile);
+        themeToggleBtn.addEventListener('click', () => {
+            Swal.fire({
+                title: 'Pilih Tema',
+                html: `
+                    <div class="grid grid-cols-2 gap-4">
+                        <button class="theme-select-btn p-4 border-2 rounded-lg hover:border-blue-500" data-theme="default">
+                            <div class="w-full h-20 rounded-lg bg-gradient-to-br from-blue-200 to-yellow-100 mb-2"></div>
+                            <p>Default</p>
+                        </button>
+                        <button class="theme-select-btn p-4 border-2 rounded-lg hover:border-blue-500" data-theme="dark-theme">
+                            <div class="w-full h-20 rounded-lg bg-gradient-to-br from-gray-800 to-gray-900 mb-2"></div>
+                            <p>Dark</p>
+                        </button>
+                        <button class="theme-select-btn p-4 border-2 rounded-lg hover:border-blue-500" data-theme="sunset-theme">
+                            <div class="w-full h-20 rounded-lg bg-gradient-to-br from-red-400 to-yellow-300 mb-2"></div>
+                            <p>Sunset</p>
+                        </button>
+                        <button class="theme-select-btn p-4 border-2 rounded-lg hover:border-blue-500" data-theme="forest-theme">
+                            <div class="w-full h-20 rounded-lg bg-gradient-to-br from-green-600 to-green-300 mb-2"></div>
+                            <p>Forest</p>
+                        </button>
+                    </div>
+                `,
+                showConfirmButton: false,
+                didOpen: () => {
+                    document.querySelectorAll('.theme-select-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            setTheme(btn.dataset.theme);
+                            Swal.close();
+                            Toast.fire({ icon: 'success', title: 'Tema berhasil diubah!' });
+                        });
+                    });
+                }
             });
         });
+        
+        document.querySelectorAll('.theme-option').forEach(btn => {
+            btn.addEventListener('click', () => {
+                setTheme(btn.dataset.theme);
+                Toast.fire({ icon: 'success', title: 'Tema diubah!' });
+            });
+        });
+        
+        saveSocialBtn.addEventListener('click', handleSaveSocial);
+        bulkDeleteBtn.addEventListener('click', async () => {
+            const result = await Swal.fire({
+                title: 'Bulk Delete',
+                text: 'Fitur ini akan menghapus multiple links. Lanjutkan?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33'
+            });
+            if (result.isConfirmed) {
+                Toast.fire({ icon: 'info', title: 'Pilih link yang akan dihapus (Coming soon)' });
+            }
+        });
+        
+        exportLinksBtn.addEventListener('click', exportLinks);
+        importLinksBtn.addEventListener('click', importLinks);
+        exportAllDataBtn.addEventListener('click', exportAllData);
+        importDataBtn.addEventListener('click', importLinks);
+        generateQRBtn.addEventListener('click', generateQRCode);
+        resetAnalyticsBtn.addEventListener('click', resetAnalytics);
+        changePasswordBtn.addEventListener('click', changePassword);
+        
+        quickAddLink.addEventListener('click', () => {
+            showAdminContent(linkManagementContent);
+            handleAddNewLink();
+        });
+        quickQRCode.addEventListener('click', () => {
+            showAdminContent(advancedContent);
+            generateQRCode();
+        });
+        quickExport.addEventListener('click', exportAllData);
+        quickPreview.addEventListener('click', () => showView(mainView));
+        
+        // Sortable
+        new Sortable(adminLinksContainer, {
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            handle: '.drag-handle',
+            onEnd: async (evt) => {
+                const pageStartIndex = (currentPage - 1) * itemsPerPage;
+                const [movedItem] = linksData.splice(pageStartIndex + evt.oldDraggableIndex, 1);
+                linksData.splice(pageStartIndex + evt.newDraggableIndex, 0, movedItem);
+                
+                const batch = db.batch();
+                linksData.forEach((link, index) => {
+                    link.order = index;
+                    const docRef = linksCollection.doc(link.id);
+                    batch.update(docRef, { order: index });
+                });
+                
+                try {
+                    await batch.commit();
+                    renderAdminPage();
+                    Toast.fire({ icon: 'success', title: 'Urutan disimpan!' });
+                } catch (error) {
+                    Toast.fire({ icon: 'error', title: 'Gagal menyimpan urutan.' });
+                    console.error(error);
+                    await loadData();
+                    renderAdminPage();
+                }
+            }
+        });
+        
+        // Make trackLinkClick global
+        window.trackLinkClick = trackLinkClick;
+        window.changePage = changePage;
+        
+        // =================================================================================
+        // INITIALIZATION
+        // =================================================================================
+        
+        loadTheme();
+        loadData().then(() => {
+            showView(mainView);
+        });
+        
     </script>
 </body>
 </html>
